@@ -4,7 +4,7 @@ import multiprocessing
 import time
 import os
 import sys
-from window_wash_crm.app import app
+from ww_crm.app import app
 
 # Global server process
 server_process = None

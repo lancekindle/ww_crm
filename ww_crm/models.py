@@ -1,5 +1,5 @@
 from datetime import datetime
-from window_wash_crm.db import db
+from ww_crm.db import db
 
 
 class Customer(db.Model):
@@ -22,7 +22,6 @@ class Customer(db.Model):
     phone = db.Column(db.String(20))
     email = db.Column(db.String(100))
     address = db.Column(db.String(200))
-    building_type = db.Column(db.String(50))  # residential, commercial
     window_count = db.Column(db.Integer)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -48,7 +47,7 @@ class Invoice(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
-    service_date = db.Column(db.DateTime, nullable=False)
+    service_date = db.Column(db.DateTime, default=datetime.utcnow)
     issue_date = db.Column(db.DateTime, default=datetime.utcnow)
     due_date = db.Column(db.DateTime)
     amount = db.Column(db.Float, nullable=False)

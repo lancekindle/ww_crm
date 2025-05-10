@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from window_wash_crm.models import Customer, Invoice
+from ww_crm.models import Customer, Invoice
 
 
 def test_customer_model(db):

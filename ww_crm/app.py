@@ -12,7 +12,7 @@ app.config.from_mapping(
 )
 
 # Import db after creating app to avoid circular imports
-from window_wash_crm.db import db, configure_db
+from ww_crm.db import db, configure_db
 
 # Configure database
 configure_db(app)
@@ -21,7 +21,7 @@ configure_db(app)
 migrate = Migrate(app, db)
 
 # Import models to ensure they're known to SQLAlchemy
-from window_wash_crm.models import Customer, Invoice
+from ww_crm.models import Customer, Invoice
 
 # Register blueprints (will be added later)
 # from window_wash_crm.routes.customers import bp as customers_bp

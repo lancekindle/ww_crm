@@ -1,9 +1,9 @@
 import os
 import tempfile
 import pytest
-from window_wash_crm.app import app as flask_app
-from window_wash_crm.db import db as _db
-from window_wash_crm.models import Customer, Invoice
+from ww_crm.app import app as flask_app
+from ww_crm.db import db as _db
+from ww_crm.models import Customer, Invoice
 
 
 @pytest.fixture(scope='session')
