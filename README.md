@@ -37,6 +37,21 @@ This CRM application is designed with simplicity and maintainability in mind. It
    pip install -r requirements.txt
    ```
 
+## Running the Application
+
+To start the Window Wash CRM application:
+
+```
+python main.py
+```
+
+This will start the Flask server on http://localhost:5000
+
+Access the following endpoints:
+- Home: http://localhost:5000/
+- Customers: http://localhost:5000/customers
+- Invoices: http://localhost:5000/invoices
+
 ## Running Tests
 
 This project uses pytest for testing. The test suite includes unit tests, integration tests, and UI tests.

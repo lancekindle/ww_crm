@@ -22,6 +22,7 @@ class Customer(db.Model):
     phone = db.Column(db.String(20))
     email = db.Column(db.String(100))
     address = db.Column(db.String(200))
+    building_type = db.Column(db.String(20))
     window_count = db.Column(db.Integer)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

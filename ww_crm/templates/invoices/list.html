@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Invoices - Window Wash CRM{% endblock %}
+
+{% block content %}
+<h1>Invoices</h1>
+
+<a href="/invoices/create" class="btn">Create New Invoice</a>
+
+{% if invoices %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Service Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for invoice in invoices %}
+        <tr>
+            <td>{{ invoice.id }}</td>
+            <td>{{ invoice.customer.name }}</td>
+            <td>{{ invoice.service_date.strftime('%Y-%m-%d') }}</td>
+            <td>${{ "%.2f"|format(invoice.amount) }}</td>
+            <td>{{ invoice.status }}</td>
+            <td>{{ invoice.service_description }}</td>
+            <td>
+                <a href="/invoices/{{ invoice.id }}" class="btn">View</a>
+                <a href="#" class="btn btn-danger"
+                   onclick="deleteInvoice({{ invoice.id }}); return false;">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No invoices found. Click "Create New Invoice" to create one.</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function deleteInvoice(invoiceId) {
+        if (confirmDelete(event, 'invoice')) {
+            fetch(`/invoices/${invoiceId}`, {
+                method: 'DELETE',
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error deleting invoice');
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

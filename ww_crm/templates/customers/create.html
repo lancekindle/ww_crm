@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Add Customer - Window Wash CRM{% endblock %}
+
+{% block content %}
+<h1>Add Customer</h1>
+
+<form method="POST" action="/customers/create">
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+
+    <div class="form-group">
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone">
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email">
+    </div>
+
+    <div class="form-group">
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address">
+    </div>
+
+    <div class="form-group">
+        <label for="building_type">Building Type:</label>
+        <select id="building_type" name="building_type">
+            <option value="residential">Residential</option>
+            <option value="commercial">Commercial</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="window_count">Window Count:</label>
+        <input type="number" id="window_count" name="window_count" min="0">
+    </div>
+
+    <div class="form-group">
+        <label for="notes">Notes:</label>
+        <textarea id="notes" name="notes" rows="4"></textarea>
+    </div>
+
+    <button type="submit" class="btn">Save Customer</button>
+    <a href="/customers" class="btn">Cancel</a>
+</form>
+{% endblock %}

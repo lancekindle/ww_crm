@@ -37,14 +37,16 @@ def db(app):
     This is a function-scoped fixture, so it's destroyed after each test.
     """
     with app.app_context():
-        _db.create_all()
+        _db.drop_all()  # Drop all tables first
+        _db.create_all()  # Recreate all tables
         yield _db
+        _db.session.rollback()  # Ensure any failed transactions are rolled back
         _db.session.remove()
         _db.drop_all()
 
 
 @pytest.fixture(scope='function')
-def client(app):
+def client(app, db):
     """Create a test client for the Flask application."""
     return app.test_client()
 

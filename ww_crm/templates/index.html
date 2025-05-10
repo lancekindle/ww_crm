@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Window Wash CRM{% endblock %}
+
+{% block content %}
+<h1>Welcome to Window Wash CRM</h1>
+
+<div class="dashboard">
+    <div class="dashboard-section">
+        <h2>Quick Navigation</h2>
+        <div class="dashboard-actions">
+            <a href="/customers" class="btn">Manage Customers</a>
+            <a href="/customers/create" class="btn">Add New Customer</a>
+            <a href="/invoices" class="btn">Manage Invoices</a>
+            <a href="/invoices/create" class="btn">Create New Invoice</a>
+        </div>
+    </div>
+
+    <div class="dashboard-section">
+        <h2>About Window Wash CRM</h2>
+        <p>A simple customer relationship management system for window washing businesses.</p>
+        <ul>
+            <li>Manage your customers' information</li>
+            <li>Create and track invoices</li>
+            <li>Generate text messages for easy communication</li>
+            <li>Mobile-friendly interface for access on the go</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

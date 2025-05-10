@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Customers - Window Wash CRM{% endblock %}
+
+{% block content %}
+<h1>Customers</h1>
+
+<a href="/customers/create" class="btn">Add Customer</a>
+
+{% if customers %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Building Type</th>
+            <th>Window Count</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for customer in customers %}
+        <tr>
+            <td>{{ customer.name }}</td>
+            <td>{{ customer.phone }}</td>
+            <td>{{ customer.email }}</td>
+            <td>{{ customer.address }}</td>
+            <td>{{ customer.building_type }}</td>
+            <td>{{ customer.window_count }}</td>
+            <td>
+                <a href="/customers/{{ customer.id }}" class="btn">View</a>
+                <a href="#" class="btn btn-danger"
+                   onclick="deleteCustomer({{ customer.id }}); return false;">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No customers found. Click "Add Customer" to create one.</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function deleteCustomer(customerId) {
+        if (confirmDelete(event, 'customer')) {
+            fetch(`/customers/${customerId}`, {
+                method: 'DELETE',
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error deleting customer');
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

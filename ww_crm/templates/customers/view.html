@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ customer.name }} - Window Wash CRM{% endblock %}
+
+{% block content %}
+<h1>Customer Details</h1>
+
+<div class="customer-details">
+    <p><strong>Name:</strong> {{ customer.name }}</p>
+    <p><strong>Phone:</strong> {{ customer.phone }}</p>
+    <p><strong>Email:</strong> {{ customer.email }}</p>
+    <p><strong>Address:</strong> {{ customer.address }}</p>
+    <p><strong>Building Type:</strong> {{ customer.building_type }}</p>
+    <p><strong>Window Count:</strong> {{ customer.window_count }}</p>
+    <p><strong>Notes:</strong> {{ customer.notes }}</p>
+    <p><strong>Created At:</strong> {{ customer.created_at.strftime('%Y-%m-%d') }}</p>
+</div>
+
+<h2>Invoices</h2>
+{% if customer.invoices %}
+<table>
+    <thead>
+        <tr>
+            <th>Service Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for invoice in customer.invoices %}
+        <tr>
+            <td>{{ invoice.service_date.strftime('%Y-%m-%d') }}</td>
+            <td>${{ "%.2f"|format(invoice.amount) }}</td>
+            <td>{{ invoice.status }}</td>
+            <td>{{ invoice.service_description }}</td>
+            <td>
+                <a href="/invoices/{{ invoice.id }}" class="btn">View</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No invoices found for this customer.</p>
+{% endif %}
+
+<div class="actions">
+    <a href="/customers" class="btn">Back to Customers</a>
+    <a href="/invoices/create?customer_id={{ customer.id }}" class="btn">Create Invoice</a>
+</div>
+{% endblock %}
