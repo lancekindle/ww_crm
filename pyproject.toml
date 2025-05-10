@@ -5,7 +5,7 @@ license = {text = "GPL3"}
 
 [tool.pytest.ini_options]
 # Pytest configuration
-testpaths = ["tests"]
+testpaths = ["ww_crm/tests"]
 # -v verbose more detailed output
 # -x to stop after a first test failure
 # -s allows print() statements to be seen

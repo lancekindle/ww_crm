@@ -3,35 +3,35 @@
 {% block title %}Invoices - Window Wash CRM{% endblock %}
 
 {% block content %}
-<h1>Invoices</h1>
+<h1 id="invoices-heading">Invoices</h1>
 
-<a href="/invoices/create" class="btn">Create New Invoice</a>
+<a href="/invoices/create" class="btn" id="btn-create-invoice">Create New Invoice</a>
 
 {% if invoices %}
-<table>
+<table id="invoices-table">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Customer</th>
-            <th>Service Date</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Description</th>
-            <th>Actions</th>
+            <th id="col-id">ID</th>
+            <th id="col-customer">Customer</th>
+            <th id="col-service-date">Service Date</th>
+            <th id="col-amount">Amount</th>
+            <th id="col-status">Status</th>
+            <th id="col-description">Description</th>
+            <th id="col-actions">Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for invoice in invoices %}
-        <tr>
-            <td>{{ invoice.id }}</td>
-            <td>{{ invoice.customer.name }}</td>
-            <td>{{ invoice.service_date.strftime('%Y-%m-%d') }}</td>
-            <td>${{ "%.2f"|format(invoice.amount) }}</td>
-            <td>{{ invoice.status }}</td>
-            <td>{{ invoice.service_description }}</td>
-            <td>
-                <a href="/invoices/{{ invoice.id }}" class="btn">View</a>
-                <a href="#" class="btn btn-danger"
+        <tr id="invoice-{{ invoice.id }}" class="invoice-row">
+            <td class="invoice-id">{{ invoice.id }}</td>
+            <td class="invoice-customer">{{ invoice.customer.name }}</td>
+            <td class="invoice-service-date">{{ invoice.service_date.strftime('%Y-%m-%d') }}</td>
+            <td class="invoice-amount">${{ "%.2f"|format(invoice.amount) }}</td>
+            <td class="invoice-status">{{ invoice.status }}</td>
+            <td class="invoice-description">{{ invoice.service_description }}</td>
+            <td class="invoice-actions">
+                <a href="/invoices/{{ invoice.id }}" class="btn" id="btn-view-invoice-{{ invoice.id }}">View</a>
+                <a href="#" class="btn btn-danger" id="btn-delete-invoice-{{ invoice.id }}"
                    onclick="deleteInvoice({{ invoice.id }}); return false;">Delete</a>
             </td>
         </tr>
@@ -39,7 +39,7 @@
     </tbody>
 </table>
 {% else %}
-<p>No invoices found. Click "Create New Invoice" to create one.</p>
+<p id="no-invoices-message">No invoices found. Click "Create New Invoice" to create one.</p>
 {% endif %}
 {% endblock %}
 

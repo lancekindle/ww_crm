@@ -1,24 +1,35 @@
+"""
+Pytest configuration and fixtures for Window Wash CRM tests.
+"""
 import os
 import tempfile
 import pytest
-from ww_crm.app import app as flask_app
+from ww_crm.app import create_app
 from ww_crm.db import db as _db
 from ww_crm.models import Customer, Invoice
+from ww_crm.tests.fixtures import CustomerFactory, InvoiceFactory, seed_test_data
 
+
+# --------------------------------
+# Application Fixtures
+# --------------------------------
 
 @pytest.fixture(scope='session')
 def app():
-    """Create a Flask app configured for testing."""
-    # Configure app for testing
-    flask_app.config.update({
+    """Create a Flask app configured for testing using the application factory."""
+    # Create a test configuration
+    test_config = {
         'TESTING': True,
         'WTF_CSRF_ENABLED': False,
         'DEBUG': False
-    })
+    }
 
     # Set up the test database
     db_fd, db_path = tempfile.mkstemp()
-    flask_app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    test_config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+
+    # Create the app with test configuration
+    flask_app = create_app(test_config)
 
     # Create the database and application context
     with flask_app.app_context():
@@ -51,40 +62,43 @@ def client(app, db):
     return app.test_client()
 
 
+# --------------------------------
+# Test Data Fixtures
+# --------------------------------
+
 @pytest.fixture(scope='function')
 def sample_customer(db):
-    """Create a sample customer for testing."""
-    customer = Customer(
-        name='Test Customer',
-        phone='123-456-7890',
-        email='test@example.com',
-        address='123 Test St, Test City',
-        building_type='residential',
-        window_count=10,
-        notes='Test notes'
-    )
-    db.session.add(customer)
-    db.session.commit()
-    return customer
+    """Create a sample customer for testing using the factory."""
+    return CustomerFactory()
 
 
 @pytest.fixture(scope='function')
 def sample_invoice(db, sample_customer):
-    """Create a sample invoice for testing."""
-    from datetime import datetime, timedelta
+    """Create a sample invoice for testing using the factory."""
+    return InvoiceFactory(customer=sample_customer)
 
-    today = datetime.utcnow()
-    due_date = today + timedelta(days=30)
 
-    invoice = Invoice(
-        customer_id=sample_customer.id,
-        service_date=today,
-        issue_date=today,
-        due_date=due_date,
-        amount=150.00,
-        status='draft',
-        service_description='Test window cleaning service'
-    )
-    db.session.add(invoice)
-    db.session.commit()
-    return invoice
+@pytest.fixture(scope='function')
+def seeded_db(db):
+    """
+    Create a database seeded with a standard set of test data.
+
+    Returns:
+        A dictionary containing lists of created customers and invoices
+    """
+    return seed_test_data(num_customers=3, invoices_per_customer=2)
+
+
+# --------------------------------
+# UI Test Fixtures
+# --------------------------------
+
+@pytest.fixture(scope='function')
+def selenium_browser():
+    """
+    Placeholder for a Selenium WebDriver instance.
+    This would be used for browser automation tests.
+    """
+    # NOTE: This would be implemented when needed
+    # For now it's just a placeholder to show structure
+    pass

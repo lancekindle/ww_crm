@@ -3,35 +3,35 @@
 {% block title %}Customers - Window Wash CRM{% endblock %}
 
 {% block content %}
-<h1>Customers</h1>
+<h1 id="customers-heading">Customers</h1>
 
-<a href="/customers/create" class="btn">Add Customer</a>
+<a href="/customers/create" class="btn" id="btn-add-customer">Add Customer</a>
 
 {% if customers %}
-<table>
+<table id="customers-table">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Address</th>
-            <th>Building Type</th>
-            <th>Window Count</th>
-            <th>Actions</th>
+            <th id="col-name">Name</th>
+            <th id="col-phone">Phone</th>
+            <th id="col-email">Email</th>
+            <th id="col-address">Address</th>
+            <th id="col-building-type">Building Type</th>
+            <th id="col-window-count">Window Count</th>
+            <th id="col-actions">Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for customer in customers %}
-        <tr>
-            <td>{{ customer.name }}</td>
-            <td>{{ customer.phone }}</td>
-            <td>{{ customer.email }}</td>
-            <td>{{ customer.address }}</td>
-            <td>{{ customer.building_type }}</td>
-            <td>{{ customer.window_count }}</td>
-            <td>
-                <a href="/customers/{{ customer.id }}" class="btn">View</a>
-                <a href="#" class="btn btn-danger"
+        <tr id="customer-{{ customer.id }}" class="customer-row">
+            <td class="customer-name">{{ customer.name }}</td>
+            <td class="customer-phone">{{ customer.phone }}</td>
+            <td class="customer-email">{{ customer.email }}</td>
+            <td class="customer-address">{{ customer.address }}</td>
+            <td class="customer-building-type">{{ customer.building_type }}</td>
+            <td class="customer-window-count">{{ customer.window_count }}</td>
+            <td class="customer-actions">
+                <a href="/customers/{{ customer.id }}" class="btn" id="btn-view-customer-{{ customer.id }}">View</a>
+                <a href="#" class="btn btn-danger" id="btn-delete-customer-{{ customer.id }}"
                    onclick="deleteCustomer({{ customer.id }}); return false;">Delete</a>
             </td>
         </tr>
@@ -39,7 +39,7 @@
     </tbody>
 </table>
 {% else %}
-<p>No customers found. Click "Add Customer" to create one.</p>
+<p id="no-customers-message">No customers found. Click "Add Customer" to create one.</p>
 {% endif %}
 {% endblock %}
 

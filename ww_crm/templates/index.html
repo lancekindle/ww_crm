@@ -3,27 +3,28 @@
 {% block title %}Home - Window Wash CRM{% endblock %}
 
 {% block content %}
-<h1>Welcome to Window Wash CRM</h1>
+<h1 id="welcome-heading">Welcome to Window Wash CRM</h1>
+<p id="welcome-message">A simple customer relationship management system for window washing businesses.</p>
 
-<div class="dashboard">
-    <div class="dashboard-section">
-        <h2>Quick Navigation</h2>
-        <div class="dashboard-actions">
-            <a href="/customers" class="btn">Manage Customers</a>
-            <a href="/customers/create" class="btn">Add New Customer</a>
-            <a href="/invoices" class="btn">Manage Invoices</a>
-            <a href="/invoices/create" class="btn">Create New Invoice</a>
+<div class="dashboard" id="dashboard">
+    <div class="dashboard-section" id="quick-nav-section">
+        <h2 id="quick-nav-heading">Quick Navigation</h2>
+        <div class="dashboard-actions" id="dashboard-actions">
+            <a href="/customers" class="btn" id="btn-manage-customers">Manage Customers</a>
+            <a href="/customers/create" class="btn" id="btn-add-new-customer">Add New Customer</a>
+            <a href="/invoices" class="btn" id="btn-manage-invoices">Manage Invoices</a>
+            <a href="/invoices/create" class="btn" id="btn-create-new-invoice">Create New Invoice</a>
         </div>
     </div>
 
-    <div class="dashboard-section">
-        <h2>About Window Wash CRM</h2>
-        <p>A simple customer relationship management system for window washing businesses.</p>
-        <ul>
-            <li>Manage your customers' information</li>
-            <li>Create and track invoices</li>
-            <li>Generate text messages for easy communication</li>
-            <li>Mobile-friendly interface for access on the go</li>
+    <div class="dashboard-section" id="about-section">
+        <h2 id="about-heading">About Window Wash CRM</h2>
+        <p id="about-description">A simple customer relationship management system for window washing businesses.</p>
+        <ul id="features-list">
+            <li id="feature-1">Manage your customers' information</li>
+            <li id="feature-2">Create and track invoices</li>
+            <li id="feature-3">Generate text messages for easy communication</li>
+            <li id="feature-4">Mobile-friendly interface for access on the go</li>
         </ul>
     </div>
 </div>

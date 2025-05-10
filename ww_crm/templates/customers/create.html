@@ -3,9 +3,9 @@
 {% block title %}Add Customer - Window Wash CRM{% endblock %}
 
 {% block content %}
-<h1>Add Customer</h1>
+<h1 id="create-customer-heading">Add Customer</h1>
 
-<form method="POST" action="/customers/create">
+<form method="POST" action="/customers/create" id="customer-form">
     <div class="form-group">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
@@ -44,7 +44,7 @@
         <textarea id="notes" name="notes" rows="4"></textarea>
     </div>
 
-    <button type="submit" class="btn">Save Customer</button>
-    <a href="/customers" class="btn">Cancel</a>
+    <button type="submit" class="btn" id="btn-save-customer">Save Customer</button>
+    <a href="/customers" class="btn" id="btn-cancel">Cancel</a>
 </form>
 {% endblock %}
