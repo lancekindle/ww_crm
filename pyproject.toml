@@ -1,0 +1,12 @@
+[project]
+version = "0.0.1"
+requires-python = ">=3.11"
+license = {text = "GPL3"}
+
+[tool.pytest.ini_options]
+# Pytest configuration
+testpaths = ["tests"]
+# -v verbose more detailed output
+# -x to stop after a first test failure
+# -s allows print() statements to be seen
+addopts = "-vs"
