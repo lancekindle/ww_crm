@@ -1,7 +1,7 @@
 """
 Customer-related routes for the Window Wash CRM application.
 """
-from flask import Blueprint, jsonify, request, render_template, abort
+from flask import Blueprint, jsonify, request, render_template, abort, redirect, url_for
 from ww_crm.db import db
 from ww_crm.models import Customer
 
@@ -76,7 +76,7 @@ def create_customer():
             db.session.commit()
 
             # Redirect to customer list
-            return render_template('customers/list.html'), 201
+            return redirect(url_for('customers.list_customers'))
 
     # Return the create form for GET requests
     return render_template('customers/create.html')
@@ -85,7 +85,9 @@ def create_customer():
 @bp.route('/<int:customer_id>', methods=['GET'])
 def view_customer(customer_id):
     """View a specific customer."""
-    customer = Customer.query.get_or_404(customer_id)
+    customer = db.session.get(Customer, customer_id)
+    if customer is None:
+        abort(404)
 
     if request.headers.get('Accept') == 'application/json' or request.content_type == 'application/json':
         # Return JSON if requested
@@ -108,7 +110,9 @@ def view_customer(customer_id):
 @bp.route('/<int:customer_id>', methods=['PUT'])
 def update_customer(customer_id):
     """Update a specific customer."""
-    customer = Customer.query.get_or_404(customer_id)
+    customer = db.session.get(Customer, customer_id)
+    if customer is None:
+        abort(404)
 
     if request.headers.get('Accept') == 'application/json' or request.content_type == 'application/json':
         data = request.get_json()
@@ -144,7 +148,9 @@ def update_customer(customer_id):
 @bp.route('/<int:customer_id>', methods=['DELETE'])
 def delete_customer(customer_id):
     """Delete a specific customer."""
-    customer = Customer.query.get_or_404(customer_id)
+    customer = db.session.get(Customer, customer_id)
+    if customer is None:
+        abort(404)
 
     db.session.delete(customer)
     db.session.commit()
@@ -156,7 +162,9 @@ def delete_customer(customer_id):
 @bp.route('/<int:customer_id>/invoices', methods=['GET'])
 def customer_invoices(customer_id):
     """Get all invoices for a specific customer."""
-    customer = Customer.query.get_or_404(customer_id)
+    customer = db.session.get(Customer, customer_id)
+    if customer is None:
+        abort(404)
 
     if request.headers.get('Accept') == 'application/json' or request.content_type == 'application/json':
         # Return JSON if requested

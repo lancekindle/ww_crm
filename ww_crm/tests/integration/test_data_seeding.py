@@ -8,6 +8,9 @@ import pytest
 from ww_crm.models import Customer, Invoice
 from ww_crm.tests.fixtures import CustomerFactory, InvoiceFactory, count_records
 
+# Mark all tests in this module as integration tests
+pytestmark = pytest.mark.integration
+
 
 def test_customer_factory(db):
     """Test that the CustomerFactory creates valid Customer objects."""

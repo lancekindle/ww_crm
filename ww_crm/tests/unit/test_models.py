@@ -1,5 +1,9 @@
+import pytest
 from datetime import datetime, timedelta
 from ww_crm.models import Customer, Invoice
+
+# Mark all tests in this module as unit tests
+pytestmark = pytest.mark.unit
 
 
 def test_customer_model(db):
@@ -63,7 +67,7 @@ def test_invoice_model(db, sample_customer):
     assert retrieved.service_description == 'Window cleaning - 8 windows'
 
     # Test relationship
-    assert retrieved.customer.name == 'Test Customer'
+    assert retrieved.customer.name == sample_customer.name
 
 
 def test_customer_invoice_relationship(db, sample_customer, sample_invoice):

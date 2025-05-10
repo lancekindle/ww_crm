@@ -1,6 +1,10 @@
 """
 Test to verify imports are working correctly.
 """
+import pytest
+
+# Mark all tests in this module as unit tests
+pytestmark = pytest.mark.unit
 
 def test_import_factory():
     """Test that we can import the factory classes."""

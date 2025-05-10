@@ -2,6 +2,9 @@ import json
 import pytest
 from flask import url_for
 
+# Mark all tests in this module as integration tests
+pytestmark = pytest.mark.integration
+
 
 class TestCustomerRoutes:
     """Tests for customer-related routes."""

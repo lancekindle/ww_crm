@@ -44,7 +44,9 @@ def create_invoice():
 
             # Check if customer exists
             customer_id = data.get('customer_id')
-            customer = Customer.query.get_or_404(customer_id)
+            customer = db.session.get(Customer, customer_id)
+            if customer is None:
+                abort(404)
 
             # Parse dates
             service_date = None
@@ -83,7 +85,9 @@ def create_invoice():
         else:
             # Handle form data
             customer_id = request.form.get('customer_id')
-            customer = Customer.query.get_or_404(customer_id)
+            customer = db.session.get(Customer, customer_id)
+            if customer is None:
+                abort(404)
 
             # Parse dates
             service_date = None
@@ -120,7 +124,9 @@ def create_invoice():
 @bp.route('/<int:invoice_id>', methods=['GET'])
 def view_invoice(invoice_id):
     """View a specific invoice."""
-    invoice = Invoice.query.get_or_404(invoice_id)
+    invoice = db.session.get(Invoice, invoice_id)
+    if invoice is None:
+        abort(404)
 
     if request.headers.get('Accept') == 'application/json' or request.content_type == 'application/json':
         # Return JSON if requested
@@ -144,7 +150,9 @@ def view_invoice(invoice_id):
 @bp.route('/<int:invoice_id>', methods=['PUT'])
 def update_invoice(invoice_id):
     """Update a specific invoice."""
-    invoice = Invoice.query.get_or_404(invoice_id)
+    invoice = db.session.get(Invoice, invoice_id)
+    if invoice is None:
+        abort(404)
 
     if request.headers.get('Accept') == 'application/json' or request.content_type == 'application/json':
         data = request.get_json()
@@ -152,7 +160,9 @@ def update_invoice(invoice_id):
         # Update invoice fields
         if 'customer_id' in data:
             # Verify customer exists
-            customer = Customer.query.get_or_404(data['customer_id'])
+            customer = db.session.get(Customer, data['customer_id'])
+            if customer is None:
+                abort(404)
             invoice.customer_id = data['customer_id']
 
         # Update dates if provided
@@ -194,7 +204,9 @@ def update_invoice(invoice_id):
 @bp.route('/<int:invoice_id>', methods=['DELETE'])
 def delete_invoice(invoice_id):
     """Delete a specific invoice."""
-    invoice = Invoice.query.get_or_404(invoice_id)
+    invoice = db.session.get(Invoice, invoice_id)
+    if invoice is None:
+        abort(404)
 
     db.session.delete(invoice)
     db.session.commit()

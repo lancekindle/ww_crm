@@ -2,6 +2,9 @@ import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime
 
+# Mark all tests in this module as unit tests
+pytestmark = pytest.mark.unit
+
 # This module will be useful when we implement utility functions in the application
 
 

@@ -1,113 +1,120 @@
-import pytest
-from playwright.sync_api import Page, expect
-from flask import url_for
+"""
+UI tests for the Window Wash CRM application.
 
-# Mark all tests in this module as requiring the live_server
-pytestmark = pytest.mark.usefixtures('live_server')
+These tests use Playwright to verify the application's UI functionality.
+The tests follow the Page Object Model pattern for better organization and maintenance.
+"""
+import logging
+import pytest
+from playwright.sync_api import Page
+
+from ww_crm.tests.e2e.pages.home_page import HomePage
+from ww_crm.tests.e2e.pages.customer_list_page import CustomerListPage
+from ww_crm.tests.e2e.pages.customer_create_page import CustomerCreatePage
+from ww_crm.tests.e2e.pages.invoice_list_page import InvoiceListPage
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+# Mark all tests in this module as requiring the live_server and as e2e tests
+pytestmark = [
+    pytest.mark.usefixtures('live_server'),
+    pytest.mark.e2e
+]
 
 
 class TestUserInterface:
-    # running `playwright install` would be required to make these tests work
-    """Tests for the UI/frontend components."""
+    """
+    UI Tests using the Page Object Model pattern.
+
+    These tests verify the functionality of the UI by interacting with
+    the application through Page Objects, which encapsulate the details
+    of how to interact with each page.
+    """
 
     @pytest.fixture(autouse=True)
     def setup(self, page: Page, live_server):
-        """Set up the page for each test."""
-        # Navigate to the homepage
-        page.goto(live_server.url())
+        """Set up page objects for each test."""
+        logger.info("Setting up UI test")
 
-    def test_homepage_loads(self, page: Page):
+        # Initialize page objects
+        self.home_page = HomePage(page, live_server.url())
+        self.customer_list_page = CustomerListPage(page, live_server.url())
+        self.customer_create_page = CustomerCreatePage(page, live_server.url())
+        self.invoice_list_page = InvoiceListPage(page, live_server.url())
+
+        # Navigate to the homepage at the start of each test
+        self.home_page.navigate()
+
+    def test_homepage_loads(self):
         """Test that the homepage loads successfully."""
-        # Check that we have a title
-        expect(page).to_have_title("Home - Window Wash CRM")
+        logger.info("Running test: homepage_loads")
 
-        # Check that the main navigation is present
-        nav = page.locator("#main-nav")
-        expect(nav).to_be_visible()
+        # Verify the home page loaded correctly
+        self.home_page.assert_page_loaded()
+        self.home_page.assert_navigation_visible()
 
-        # Check for customer and invoice links using specific IDs
-        expect(page.locator("#nav-customers")).to_be_visible()
-        expect(page.locator("#nav-invoices")).to_be_visible()
-
-        # Check for welcome content
-        expect(page.locator("#welcome-heading")).to_be_visible()
-        expect(page.locator("#welcome-message")).to_be_visible()
-
-    def test_customer_list(self, page: Page, sample_customer, live_server):
+    def test_customer_list(self, sample_customer):
         """Test that the customer list displays properly."""
-        # Navigate to customers page using the ID
-        page.locator("#nav-customers").click()
+        logger.info("Running test: customer_list")
 
-        # Check that we're on the customer list page
-        expect(page).to_have_url(live_server.url() + "/customers")
-
-        # Check for customers heading
-        expect(page.locator("#customers-heading")).to_be_visible()
-
-        # Check for the customers table
-        expect(page.locator("#customers-table")).to_be_visible()
-
-        # Check for our sample customer in the table
-        customer_row = page.locator(f"#customer-{sample_customer.id}")
-        expect(customer_row).to_be_visible()
-
-        # Check that the customer name is displayed
-        expect(customer_row.locator(".customer-name")).to_contain_text(sample_customer.name)
-
-    @pytest.mark.skip(reason="Form submission not redirecting as expected - needs further investigation")
-    def test_customer_creation_form(self, page: Page, live_server):
-        """Test the customer creation form."""
         # Navigate to customers page
-        page.locator("#nav-customers").click()
+        self.home_page.click_nav_customers()
 
-        # Click on Add Customer button
-        page.locator("#btn-add-customer").click()
+        # Verify page loaded correctly
+        self.customer_list_page.assert_page_loaded()
 
-        # Check that the form is shown
-        form = page.locator("#customer-form")
-        expect(form).to_be_visible()
+        # Verify sample customer is visible
+        self.customer_list_page.assert_customer_visible(
+            sample_customer.id, sample_customer.name
+        )
 
-        # Fill and submit the form using specific IDs
-        page.fill("#name", "UI Test Customer")
-        page.fill("#phone", "555-123-4567")
-        page.fill("#email", "ui-test@example.com")
-        page.fill("#address", "123 UI Test St")
-        page.select_option("#building_type", "residential")
-        page.fill("#window_count", "15")
-        page.fill("#notes", "Created via UI test")
+    @pytest.mark.skip(reason="Form submission test needs additional adjustments to handle navigation issues. Will be fixed in separate PR.")
+    def test_customer_creation_form(self):
+        """Test the customer creation form."""
+        logger.info("Running test: customer_creation_form")
 
-        # Click the submit button
-        page.locator("#btn-save-customer").click()
+        # Navigate to the customer create page
+        self.customer_create_page.navigate()
 
-        # The form submission keeps us on the create page rather than redirecting
-        # This might indicate validation errors or a different form submission flow
-        # For now, we'll check that we're still on the create page
-        expect(page).to_have_url(live_server.url() + "/customers/create")
+        # Verify the page loaded correctly
+        self.customer_create_page.assert_page_loaded()
 
-        # In a real test, we'd want to check for validation messages or success indicators
-        # but we'll skip that for now until we can determine the expected behavior
+        # Fill out and submit the form
+        customer_data = {
+            'name': 'UI Test Customer',
+            'phone': '555-123-4567',
+            'email': 'ui-test@example.com',
+            'address': '123 UI Test St',
+            'building_type': 'residential',
+            'window_count': 15,
+            'notes': 'Created via UI test'
+        }
 
-    def test_invoice_list(self, page: Page, sample_invoice, live_server):
+        # Create the customer
+        success, customer_name = self.customer_create_page.create_customer(customer_data)
+
+        # Navigate to customer list page to verify, regardless of form submission result
+        self.customer_list_page.navigate()
+        self.customer_list_page.assert_page_loaded()
+
+        # Search for the customer in the list by name
+        self.customer_list_page.assert_customer_exists_by_name(customer_name)
+        logger.info(f"Successfully verified customer {customer_name} was created")
+
+    def test_invoice_list(self, sample_invoice):
         """Test that the invoice list displays properly."""
-        # Navigate to invoices page using the ID
-        page.locator("#nav-invoices").click()
+        logger.info("Running test: invoice_list")
 
-        # Check that we're on the invoice list page
-        expect(page).to_have_url(live_server.url() + "/invoices")
+        # Navigate to invoices page
+        self.home_page.click_nav_invoices()
 
-        # Check for invoices heading
-        expect(page.locator("#invoices-heading")).to_be_visible()
+        # Verify page loaded correctly
+        self.invoice_list_page.assert_page_loaded()
 
-        # Check for the invoices table
-        expect(page.locator("#invoices-table")).to_be_visible()
-
-        # Check for our sample invoice in the table
-        invoice_row = page.locator(f"#invoice-{sample_invoice.id}")
-        expect(invoice_row).to_be_visible()
-
-        # Check that the customer name is displayed
-        expect(invoice_row.locator(".invoice-customer")).to_contain_text(sample_invoice.customer.name)
-
-        # Format the amount with dollar sign and check
-        amount_text = f"${sample_invoice.amount:.2f}"
-        expect(invoice_row.locator(".invoice-amount")).to_contain_text(amount_text)
+        # Verify sample invoice is visible
+        self.invoice_list_page.assert_invoice_visible(
+            sample_invoice.id,
+            sample_invoice.amount,
+            sample_invoice.customer.name
+        )

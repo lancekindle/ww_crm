@@ -9,4 +9,12 @@ testpaths = ["ww_crm/tests"]
 # -v verbose more detailed output
 # -x to stop after a first test failure
 # -s allows print() statements to be seen
-addopts = "-vs"
+# --tb=native provides better tracebacks
+# --maxprocesses=4 enables parallel testing with up to 4 processes
+addopts = "-vsx --tb=native --maxprocesses=4"
+# Group tests by test type for better parallelization
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "e2e: End-to-end tests",
+]
