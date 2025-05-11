@@ -3,7 +3,6 @@
 Test runner script for the Window Wash CRM.
 
 This script can be used to run the test suite with different configurations,
-including support for test parallelization.
 """
 import sys
 import os
@@ -18,14 +17,9 @@ def run_tests():
 
     # Default pytest arguments
     args = [
-        '-xvs',  # x: stop on first failure, v: verbose, s: show print statements
+        '-xs',  # x: stop on first failure, v: verbose, s: show print statements
         '--tb=native',  # Use Python's traceback format
     ]
-
-    # By default, enable parallelization with 4 processes
-    # Skip parallel execution if PYTEST_DISABLE_PARALLEL is set
-    if not os.environ.get('PYTEST_DISABLE_PARALLEL'):
-        args.append('--maxprocesses=4')
 
     # Handle specific test categories if provided as command line arguments
     if len(sys.argv) > 1:
@@ -45,14 +39,6 @@ def run_tests():
             args.append('-m integration')  # Run only integration tests
         elif category == 'e2e':
             args.append('-m e2e')  # Run only end-to-end tests
-        elif category == 'parallel':
-            # Ensure we use parallelization
-            if '--maxprocesses=4' not in args:
-                args.append('--maxprocesses=4')
-        elif category == 'sequential':
-            # Disable parallelization
-            if '--maxprocesses=4' in args:
-                args.remove('--maxprocesses=4')
         else:
             args.append(sys.argv[1])  # Allow specifying a test file or pattern
 

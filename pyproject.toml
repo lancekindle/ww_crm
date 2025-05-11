@@ -7,11 +7,9 @@ license = {text = "GPL3"}
 # Pytest configuration
 testpaths = ["ww_crm/tests"]
 # -v verbose more detailed output
-# -x to stop after a first test failure
 # -s allows print() statements to be seen
 # --tb=native provides better tracebacks
-# --maxprocesses=4 enables parallel testing with up to 4 processes
-addopts = "-vsx --tb=native --maxprocesses=4"
+addopts = "-vs --tb=native"
 # Group tests by test type for better parallelization
 markers = [
     "unit: Unit tests",

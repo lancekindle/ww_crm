@@ -52,10 +52,6 @@ python run_tests.py utils       # Run utility tests
 python run_tests.py unit        # Run all unit tests
 python run_tests.py integration # Run all integration tests
 python run_tests.py e2e         # Run all end-to-end tests
-
-# Control parallelization
-python run_tests.py parallel    # Force parallel testing
-python run_tests.py sequential  # Disable parallel testing
 ```
 
 ### Using pytest Directly
@@ -71,34 +67,9 @@ pytest -m unit
 pytest -m integration
 pytest -m e2e
 
-# Run tests in parallel with specified number of processes
-pytest --maxprocesses=4
-
 # Run tests with verbose output
 pytest -v
-
-# Run tests and stop on first failure
-pytest -x
 ```
-
-## Test Parallelization
-
-The test suite supports parallel test execution to speed up the testing process. This is implemented using the pytest-xdist plugin.
-
-### How It Works
-
-- By default, tests run with 4 parallel processes
-- The number of processes can be adjusted in the `pyproject.toml` file or via command-line arguments
-- Test categories are designed to be run in isolation to prevent conflicts
-- Fixture scoping ensures proper resource management
-
-### Controlling Parallelization
-
-You can control parallelization using these methods:
-
-1. Environment variable: `PYTEST_DISABLE_PARALLEL=1 python run_tests.py`
-2. Command flag: `python run_tests.py sequential`
-3. Direct pytest option: `pytest --maxprocesses=1`
 
 ## Test Types and Fixtures
 
@@ -197,11 +168,6 @@ The test suite is designed to evolve with the application. The testing strategy 
 1. **Fixed SQLAlchemy Deprecation Warnings**:
    - Updated all uses of `query.get()` to `db.session.get()` with proper error handling
    - This addresses SQLAlchemy 2.0 compatibility
-
-2. **Implemented Test Parallelization**:
-   - Added pytest-xdist support for parallel test execution
-   - Configured test categories to run in parallel safely
-   - Added controls to enable/disable parallelization
 
 3. **Added Comprehensive Documentation**:
    - Created detailed testing documentation (this file)
