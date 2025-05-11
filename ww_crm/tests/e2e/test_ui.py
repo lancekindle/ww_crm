@@ -101,16 +101,21 @@ class TestUserInterface:
             sample_customer.id, sample_customer.name
         )
 
-    @pytest.mark.skip(reason="Form submission has known issues in the application that need to be resolved. The test framework is ready but the application needs fixes.")
+    # Using xfail with run=True allows the test to run but won't fail the whole suite if it times out
+    @pytest.mark.xfail(reason="Test may time out but we want to continue with other tests", run=True)
     def test_customer_creation_form(self):
         """Test the customer creation form with default test data."""
-        logger.info("Running test: customer_creation_form")
+        logger.info("DEBUG: Running test: customer_creation_form")
 
         # Navigate to the customer create page
+        logger.info("DEBUG: About to navigate to customer create page")
         self.customer_create_page.navigate()
+        logger.info("DEBUG: Navigation to customer create page completed")
 
         # Verify the page loaded correctly
+        logger.info("DEBUG: About to assert page loaded")
         self.customer_create_page.assert_page_loaded()
+        logger.info("DEBUG: Assert page loaded completed")
 
         # Fill out and submit the form
         customer_data = {
@@ -123,42 +128,102 @@ class TestUserInterface:
             'notes': 'Created via UI test'
         }
 
-        # Create the customer
-        success, customer_name = self.customer_create_page.create_customer(customer_data)
+        # Create the customer with a timeout to prevent hanging
+        logger.info("DEBUG: About to create customer")
+        try:
+            # Set a page timeout to prevent hanging
+            self.customer_create_page.page.set_default_timeout(10000)  # 10 seconds timeout
+            success, customer_name = self.customer_create_page.create_customer(customer_data)
+            logger.info(f"DEBUG: Customer creation completed with success={success}")
+        except Exception as e:
+            logger.error(f"DEBUG: Exception during customer creation: {str(e)}")
+            raise
 
         # Verify the form submission result
         assert success, "Customer creation form submission failed"
 
         # Navigate to customer list page to verify
+        logger.info("DEBUG: About to navigate to customer list page")
         self.customer_list_page.navigate()
+        logger.info("DEBUG: Navigation to customer list page completed")
+
+        logger.info("DEBUG: About to assert customer list page loaded")
         self.customer_list_page.assert_page_loaded()
+        logger.info("DEBUG: Assert customer list page loaded completed")
 
         # Search for the customer in the list by name
-        self.customer_list_page.assert_customer_exists_by_name(customer_name)
-        logger.info(f"Successfully verified customer {customer_name} was created")
+        logger.info(f"DEBUG: About to assert customer {customer_name} exists")
+        try:
+            # Set a timeout for the verification to prevent hanging
+            self.customer_list_page.page.set_default_timeout(10000)  # 10 seconds timeout
+            self.customer_list_page.assert_customer_exists_by_name(customer_name)
+            logger.info(f"DEBUG: Successfully verified customer {customer_name} was created")
+        except Exception as e:
+            logger.error(f"DEBUG: Exception during customer verification: {str(e)}")
+            # Take a screenshot when verification fails
+            try:
+                screenshot_path = f"customer_verify_failed_{customer_name.replace(' ', '_')}.png"
+                self.customer_list_page.page.screenshot(path=screenshot_path)
+                logger.info(f"DEBUG: Saved verification failure screenshot to {screenshot_path}")
+            except Exception as ss_error:
+                logger.error(f"DEBUG: Failed to capture screenshot: {str(ss_error)}")
+            raise
 
-    @pytest.mark.skip(reason="Form submission has known issues in the application that need to be resolved. The parameterized test framework is ready but the application needs fixes.")
+    @pytest.mark.xfail(reason="Test may time out but we want to continue with other tests", run=True)
     @pytest.mark.parametrize("customer_data", CUSTOMER_TEST_DATA)
     def test_parameterized_customer_creation(self, customer_data):
         """Test customer creation with different types of customer data."""
-        logger.info(f"Running parameterized test with customer type: {customer_data.get('building_type')}")
+        logger.info(f"DEBUG: Running parameterized test with customer type: {customer_data.get('building_type')}")
 
         # Navigate to the customer create page
+        logger.info("DEBUG: About to navigate to customer create page")
         self.customer_create_page.navigate()
-        self.customer_create_page.assert_page_loaded()
+        logger.info("DEBUG: Navigation to customer create page completed")
 
-        # Create the customer using parameterized data
-        success, customer_name = self.customer_create_page.create_customer(customer_data)
+        logger.info("DEBUG: About to assert page loaded")
+        self.customer_create_page.assert_page_loaded()
+        logger.info("DEBUG: Assert page loaded completed")
+
+        # Create the customer using parameterized data with a timeout to prevent hanging
+        logger.info("DEBUG: About to create customer with parameterized data")
+        try:
+            # Set a page timeout to prevent hanging
+            self.customer_create_page.page.set_default_timeout(10000)  # 10 seconds timeout
+            success, customer_name = self.customer_create_page.create_customer(customer_data)
+            logger.info(f"DEBUG: Customer creation completed with success={success}")
+        except Exception as e:
+            logger.error(f"DEBUG: Exception during customer creation: {str(e)}")
+            raise
 
         # Verify the form submission result
         assert success, f"Parameterized customer creation failed for {customer_data.get('building_type')} type"
 
         # Verify the customer was created
+        logger.info("DEBUG: About to navigate to customer list page")
         self.customer_list_page.navigate()
-        self.customer_list_page.assert_page_loaded()
-        self.customer_list_page.assert_customer_exists_by_name(customer_name)
+        logger.info("DEBUG: Navigation to customer list page completed")
 
-        logger.info(f"Successfully created and verified {customer_data.get('building_type')} customer: {customer_name}")
+        logger.info("DEBUG: About to assert customer list page loaded")
+        self.customer_list_page.assert_page_loaded()
+        logger.info("DEBUG: Assert customer list page loaded completed")
+
+        # Search for the customer in the list by name
+        logger.info(f"DEBUG: About to assert customer {customer_name} exists")
+        try:
+            # Set a timeout for the verification to prevent hanging
+            self.customer_list_page.page.set_default_timeout(10000)  # 10 seconds timeout
+            self.customer_list_page.assert_customer_exists_by_name(customer_name)
+            logger.info(f"DEBUG: Successfully created and verified {customer_data.get('building_type')} customer: {customer_name}")
+        except Exception as e:
+            logger.error(f"DEBUG: Exception during customer verification: {str(e)}")
+            # Take a screenshot when verification fails
+            try:
+                screenshot_path = f"customer_verify_failed_{customer_name.replace(' ', '_')}.png"
+                self.customer_list_page.page.screenshot(path=screenshot_path)
+                logger.info(f"DEBUG: Saved verification failure screenshot to {screenshot_path}")
+            except Exception as ss_error:
+                logger.error(f"DEBUG: Failed to capture screenshot: {str(ss_error)}")
+            raise
 
     def test_invoice_list(self, sample_invoice):
         """Test that the invoice list displays properly."""

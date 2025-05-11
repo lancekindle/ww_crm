@@ -10,7 +10,8 @@ testpaths = ["ww_crm/tests"]
 # -v verbose more detailed output
 # -s allows print() statements to be seen
 # --tb=native provides better tracebacks
-addopts = "-vs --tb=native"
+# --timeout=30 sets a 30-second timeout for each test
+addopts = "-vs --tb=native --timeout=15"
 # Group tests by test type for better parallelization
 markers = [
     "unit: Unit tests",

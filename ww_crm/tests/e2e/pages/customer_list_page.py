@@ -100,13 +100,80 @@ class CustomerListPage(NavigablePage):
         Args:
             name: The name of the customer to check for
         """
-        logger.debug(f"Verifying customer with name '{name}' exists")
+        logger.info(f"DEBUG: Verifying customer with name '{name}' exists")
         self.assert_customer_table_visible()
-        self.assert_element_contains_text(
-            CustomerPageSelectors.LIST_TABLE,
-            name,
-            f"Customer with name '{name}'"
-        )
+
+        # Wait for the page to fully load with a reasonable timeout
+        try:
+            # ALLOW_WAIT: Needed to ensure all network requests complete before validating customer presence
+            self.page.wait_for_load_state("networkidle", timeout=5000)
+            logger.info("DEBUG: Page reached networkidle state")
+        except Exception as e:
+            logger.warning(f"DEBUG: Wait for networkidle failed: {str(e)}")
+
+        # Wait to ensure the table is fully populated
+        try:
+            table_selector = CustomerPageSelectors.LIST_TABLE
+            # ALLOW_WAIT: Required to ensure table rows are rendered before checking for customer
+            self.page.wait_for_selector(f"{table_selector} tr", timeout=5000)
+            logger.info("DEBUG: Table rows are visible")
+
+            # Get all customer rows in the table
+            rows = self.page.locator(f"{table_selector} tr").all()
+            logger.info(f"DEBUG: Found {len(rows)} table rows")
+
+            # Log all customer names found in the table for debugging
+            names_found = []
+            for row in rows:
+                try:
+                    # Skip header row if it exists
+                    if row.get_attribute("id") and "customer-" in row.get_attribute("id"):
+                        row_text = row.text_content()
+                        names_found.append(row_text)
+                        if name in row_text:
+                            logger.info(f"DEBUG: Found customer '{name}' in table")
+                            return True
+                except Exception as row_error:
+                    logger.error(f"DEBUG: Error processing row: {str(row_error)}")
+
+            logger.warning(f"DEBUG: Customer '{name}' not found in table. Names found: {names_found}")
+
+            # Fallback to the original assertion if iterative search fails
+            logger.info(f"DEBUG: Falling back to text content search for '{name}'")
+            self.assert_element_contains_text(
+                table_selector,
+                name,
+                f"Customer with name '{name}'"
+            )
+            return True
+        except Exception as e:
+            logger.error(f"DEBUG: Error during customer search: {str(e)}")
+
+            # Take a screenshot for debugging
+            try:
+                screenshot_path = f"customer_search_failed_{name.replace(' ', '_')}.png"
+                self.page.screenshot(path=screenshot_path)
+                logger.info(f"DEBUG: Saved screenshot to {screenshot_path}")
+            except Exception as ss_error:
+                logger.error(f"DEBUG: Failed to capture screenshot: {str(ss_error)}")
+
+            # Get page HTML for debugging
+            try:
+                page_html = self.page.content()
+                logger.info(f"DEBUG: Page title: {self.page.title()}")
+                logger.info(f"DEBUG: Page URL: {self.page.url}")
+
+                # Check if the table exists
+                table_exists = self.page.locator(CustomerPageSelectors.LIST_TABLE).count() > 0
+                logger.info(f"DEBUG: Table exists: {table_exists}")
+
+                if table_exists:
+                    table_html = self.page.locator(CustomerPageSelectors.LIST_TABLE).evaluate("el => el.outerHTML")
+                    logger.info(f"DEBUG: Table HTML:\n{table_html}")
+            except Exception as html_error:
+                logger.error(f"DEBUG: Failed to get page HTML: {str(html_error)}")
+
+            raise AssertionError(f"Customer with name '{name}' not found in customer table")
 
     def click_view_customer(self, customer_id):
         """
