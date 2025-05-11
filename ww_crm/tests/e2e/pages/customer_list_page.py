@@ -103,24 +103,11 @@ class CustomerListPage(NavigablePage):
         logger.info(f"DEBUG: Verifying customer with name '{name}' exists")
         self.assert_customer_table_visible()
 
-        # Wait for the page to fully load with a reasonable timeout
-        try:
-            # ALLOW_WAIT: Needed to ensure all network requests complete before validating customer presence
-            self.page.wait_for_load_state("networkidle", timeout=5000)
-            logger.info("DEBUG: Page reached networkidle state")
-        except Exception as e:
-            logger.warning(f"DEBUG: Wait for networkidle failed: {str(e)}")
-
         # Wait to ensure the table is fully populated
         try:
             table_selector = CustomerPageSelectors.LIST_TABLE
-            # ALLOW_WAIT: Required to ensure table rows are rendered before checking for customer
-            self.page.wait_for_selector(f"{table_selector} tr", timeout=5000)
-            logger.info("DEBUG: Table rows are visible")
-
             # Get all customer rows in the table
             rows = self.page.locator(f"{table_selector} tr").all()
-            logger.info(f"DEBUG: Found {len(rows)} table rows")
 
             # Log all customer names found in the table for debugging
             names_found = []

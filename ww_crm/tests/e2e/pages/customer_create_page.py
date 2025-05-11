@@ -118,23 +118,6 @@ class CustomerCreatePage(NavigablePage, FormPage):
             self.navigate()
             logger.info(f"DEBUG: Navigated to create page: {self.page.url}")
 
-        # Confirm the page is ready
-        try:
-            # ALLOW_WAIT: Necessary to ensure the form is visible before attempting to fill it
-            self.page.wait_for_selector(CustomerPageSelectors.CUSTOMER_FORM, state="visible", timeout=5000)
-            logger.info("DEBUG: Customer form is visible")
-        except Exception as e:
-            logger.error(f"DEBUG: Error waiting for form: {str(e)}")
-            # Try to reload the page if form not found
-            self.navigate()
-            try:
-                # ALLOW_WAIT: Necessary to confirm the form is visible after page reload
-                self.page.wait_for_selector(CustomerPageSelectors.CUSTOMER_FORM, state="visible", timeout=5000)
-                logger.info("DEBUG: Customer form is visible after reload")
-            except Exception as reload_error:
-                logger.error(f"DEBUG: Form still not visible after reload: {str(reload_error)}")
-                return False, "Error: Form not found"
-
         # Fill the form with extra logging
         logger.info("DEBUG: Starting to fill customer form")
         filled_fields = self.fill_customer_form(customer_data)

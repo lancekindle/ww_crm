@@ -6,7 +6,6 @@ license = {text = "GPL3"}
 [tool.pytest.ini_options]
 # Pytest configuration
 testpaths = ["ww_crm/tests"]
-# -n auto allows parallel execution
 # -v verbose more detailed output
 # -s allows print() statements to be seen
 # --tb=native provides better tracebacks
