@@ -4,6 +4,7 @@ Base page object pattern implementation.
 This module provides the foundation for the Page Object Model pattern,
 following SOLID principles to create maintainable and extensible test code.
 """
+
 import logging
 from playwright.sync_api import Page, expect
 from .selectors import NavigationSelectors
@@ -176,8 +177,13 @@ class FormPage(BasePage):
     by keeping form capabilities separate.
     """
 
-    def submit_form(self, form_selector: str, submit_button_selector: str = None,
-                   expected_redirect: str = None, timeout: int = 10000):
+    def submit_form(
+        self,
+        form_selector: str,
+        submit_button_selector: str = None,
+        expected_redirect: str = None,
+        timeout: int = 10000,
+    ):
         """
         Submit a form and handle navigation expectations.
 
@@ -234,15 +240,19 @@ class FormPage(BasePage):
                                     logger.info(f"DEBUG: Using JavaScript to submit form")
                                     form.evaluate("form => { console.log('Submitting form via JS'); form.submit(); }")
                             except Exception as e:
-                                logger.warning(f"DEBUG: Failed to click submit button: {str(e)}. Trying JavaScript form submission.")
+                                logger.warning(
+                                    f"DEBUG: Failed to click submit button: {str(e)}. Trying JavaScript form submission."
+                                )
                                 # Different approach with more logging
-                                js_result = self.page.evaluate(f"""() => {{
+                                js_result = self.page.evaluate(
+                                    f"""() => {{
                                     const form = document.querySelector('{form_selector}');
                                     if (!form) {{ return "Form not found"; }}
                                     console.log('Form found in JS, submitting...');
                                     form.submit();
                                     return "Form submitted via JS";
-                                }}""")
+                                }}"""
+                                )
                                 logger.info(f"DEBUG: JavaScript submit result: {js_result}")
                         else:
                             logger.info(f"DEBUG: No submit button provided, submitting form via JavaScript")
@@ -258,7 +268,9 @@ class FormPage(BasePage):
                             logger.info(f"DEBUG: Successfully navigated to expected URL: {expected_url}")
                             return True
                         else:
-                            logger.warning(f"DEBUG: Navigation occurred but to wrong URL. Expected: {expected_url}, Got: {actual_url}")
+                            logger.warning(
+                                f"DEBUG: Navigation occurred but to wrong URL. Expected: {expected_url}, Got: {actual_url}"
+                            )
                     else:
                         logger.warning(f"DEBUG: No navigation occurred")
 
@@ -277,8 +289,12 @@ class FormPage(BasePage):
 
                     # Check for form validation errors with various possible selectors
                     error_selectors = [
-                        ".error-message", ".field-error", ".validation-error",
-                        ".alert", ".form-error", "#error-message"
+                        ".error-message",
+                        ".field-error",
+                        ".validation-error",
+                        ".alert",
+                        ".form-error",
+                        "#error-message",
                     ]
 
                     for selector in error_selectors:
@@ -339,7 +355,9 @@ class FormPage(BasePage):
                 # Log element details
                 tag_name = element.evaluate("el => el.tagName.toLowerCase()")
                 element_type = element.get_attribute("type") if tag_name == "input" else tag_name
-                logger.info(f"DEBUG: Element {selector} is a {tag_name}{' of type ' + element_type if element_type and tag_name == 'input' else ''}")
+                logger.info(
+                    f"DEBUG: Element {selector} is a {tag_name}{' of type ' + element_type if element_type and tag_name == 'input' else ''}"
+                )
 
                 # Handle different element types
                 if isinstance(value, bool):
@@ -376,7 +394,9 @@ class FormPage(BasePage):
                     logger.info(f"DEBUG: After filling, field {selector} has value: {actual_value}")
 
                     if str(actual_value) != str(value) and not (isinstance(value, bool) and actual_value == value):
-                        logger.warning(f"DEBUG: Field value mismatch for {selector}. Expected: {value}, Actual: {actual_value}")
+                        logger.warning(
+                            f"DEBUG: Field value mismatch for {selector}. Expected: {value}, Actual: {actual_value}"
+                        )
                 except Exception as verify_error:
                     logger.error(f"DEBUG: Error verifying field value: {str(verify_error)}")
 
@@ -403,8 +423,13 @@ class FormPage(BasePage):
             # If there's an error, fall back to checking the selector name
             return "select" in selector.lower()
 
-    def submit_form_with_retry(self, form_selector: str, submit_button_selector: str = None,
-                              expected_redirect: str = None, max_retries: int = 3):
+    def submit_form_with_retry(
+        self,
+        form_selector: str,
+        submit_button_selector: str = None,
+        expected_redirect: str = None,
+        max_retries: int = 3,
+    ):
         """
         Submit a form with retry logic for flaky form submissions.
 
@@ -417,7 +442,9 @@ class FormPage(BasePage):
         Returns:
             bool: True if submission and expected navigation succeeded
         """
-        logger.info(f"DEBUG: Starting form submission with retry. Form: {form_selector}, Button: {submit_button_selector}")
+        logger.info(
+            f"DEBUG: Starting form submission with retry. Form: {form_selector}, Button: {submit_button_selector}"
+        )
 
         # Log the form's action attribute to debug
         try:
@@ -446,16 +473,18 @@ class FormPage(BasePage):
                 logger.info(f"DEBUG: Form HTML before submission:\n{form_html}")
 
                 # Log form field values
-                form_fields = self.page.locator(f"{form_selector} input, {form_selector} select, {form_selector} textarea").all()
+                form_fields = self.page.locator(
+                    f"{form_selector} input, {form_selector} select, {form_selector} textarea"
+                ).all()
                 logger.info(f"DEBUG: Found {len(form_fields)} form fields")
                 for field in form_fields:
                     try:
-                        field_name = field.get_attribute('name')
-                        field_id = field.get_attribute('id')
-                        field_type = field.get_attribute('type')
+                        field_name = field.get_attribute("name")
+                        field_id = field.get_attribute("id")
+                        field_type = field.get_attribute("type")
 
                         value = None
-                        if field_type == 'checkbox' or field_type == 'radio':
+                        if field_type == "checkbox" or field_type == "radio":
                             value = field.is_checked()
                         else:
                             value = field.input_value()
@@ -485,8 +514,14 @@ class FormPage(BasePage):
                     logger.info(f"DEBUG: Page title: {self.page.title()}")
 
                     # Look for various types of error messages
-                    selectors = [".error-message", ".field-error", ".validation-error",
-                                ".alert", "#error-message", ".form-error"]
+                    selectors = [
+                        ".error-message",
+                        ".field-error",
+                        ".validation-error",
+                        ".alert",
+                        "#error-message",
+                        ".form-error",
+                    ]
 
                     for selector in selectors:
                         error_elements = self.page.locator(selector).all()

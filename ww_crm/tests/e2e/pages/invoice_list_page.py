@@ -1,6 +1,7 @@
 """
 Invoice list page object for UI testing.
 """
+
 import logging
 from playwright.sync_api import Page
 from .base_page import NavigablePage
@@ -36,22 +37,13 @@ class InvoiceListPage(NavigablePage):
         """Assert that the invoice list page is loaded correctly."""
         logger.debug("Verifying invoice list page loaded")
         self.assert_url("/invoices")
-        self.assert_element_visible(
-            InvoicePageSelectors.INVOICES_HEADING,
-            "Invoices heading"
-        )
-        self.assert_element_visible(
-            InvoicePageSelectors.INVOICES_TABLE,
-            "Invoices table"
-        )
+        self.assert_element_visible(InvoicePageSelectors.INVOICES_HEADING, "Invoices heading")
+        self.assert_element_visible(InvoicePageSelectors.INVOICES_TABLE, "Invoices table")
 
     def click_add_invoice(self):
         """Click the Add Invoice button."""
         logger.info("Clicking Add Invoice button")
-        self.click_element(
-            InvoicePageSelectors.BTN_ADD_INVOICE,
-            "Add Invoice button"
-        )
+        self.click_element(InvoicePageSelectors.BTN_ADD_INVOICE, "Add Invoice button")
 
     def assert_invoice_visible(self, invoice_id, expected_amount=None, expected_customer_name=None):
         """
@@ -69,18 +61,12 @@ class InvoiceListPage(NavigablePage):
         if expected_amount:
             amount_text = f"${expected_amount:.2f}"
             amount_selector = InvoicePageSelectors.invoice_amount_cell(invoice_id)
-            self.assert_element_contains_text(
-                amount_selector,
-                amount_text,
-                f"Invoice amount for ID {invoice_id}"
-            )
+            self.assert_element_contains_text(amount_selector, amount_text, f"Invoice amount for ID {invoice_id}")
 
         if expected_customer_name:
             customer_selector = InvoicePageSelectors.invoice_customer_cell(invoice_id)
             self.assert_element_contains_text(
-                customer_selector,
-                expected_customer_name,
-                f"Invoice customer name for ID {invoice_id}"
+                customer_selector, expected_customer_name, f"Invoice customer name for ID {invoice_id}"
             )
 
     def click_view_invoice(self, invoice_id):

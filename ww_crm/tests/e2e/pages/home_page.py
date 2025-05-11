@@ -1,6 +1,7 @@
 """
 Home page object for UI testing.
 """
+
 from playwright.sync_api import Page
 from .base_page import NavigablePage
 from .selectors import HomePageSelectors
@@ -36,11 +37,5 @@ class HomePage(NavigablePage):
         assert actual_title == expect_title, f"Expected title '{expect_title}', got '{actual_title}'"
 
         # Check content elements
-        self.assert_element_visible(
-            HomePageSelectors.WELCOME_HEADING,
-            "Welcome heading"
-        )
-        self.assert_element_visible(
-            HomePageSelectors.WELCOME_MESSAGE,
-            "Welcome message"
-        )
+        self.assert_element_visible(HomePageSelectors.WELCOME_HEADING, "Welcome heading")
+        self.assert_element_visible(HomePageSelectors.WELCOME_MESSAGE, "Welcome message")

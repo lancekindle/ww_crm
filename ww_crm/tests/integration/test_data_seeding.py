@@ -4,6 +4,7 @@ Tests for the data seeding functionality.
 These tests demonstrate and verify the data seeding
 capabilities for test data generation.
 """
+
 import pytest
 from ww_crm.models import Customer, Invoice
 from ww_crm.tests.fixtures import CustomerFactory, InvoiceFactory, count_records
@@ -20,8 +21,8 @@ def test_customer_factory(db):
     # Verify customer was created and saved to the database
     assert customer.id is not None
     assert isinstance(customer, Customer)
-    assert customer.name.startswith('Test Customer')
-    assert '@example.com' in customer.email
+    assert customer.name.startswith("Test Customer")
+    assert "@example.com" in customer.email
 
     # Check record count in the database
     assert count_records(Customer) == 1
@@ -66,17 +67,17 @@ def test_invoice_with_specific_customer(db):
 def test_seeded_db_fixture(seeded_db):
     """Test that the seeded_db fixture properly seeds the database."""
     # Verify the returned data
-    assert 'customers' in seeded_db
-    assert 'invoices' in seeded_db
+    assert "customers" in seeded_db
+    assert "invoices" in seeded_db
 
     # Check we have the expected number of records
-    assert len(seeded_db['customers']) == 3
-    assert len(seeded_db['invoices']) == 6
+    assert len(seeded_db["customers"]) == 3
+    assert len(seeded_db["invoices"]) == 6
 
     # Verify record counts in the database match
     assert count_records(Customer) == 3
     assert count_records(Invoice) == 6
 
     # Verify relationships
-    for invoice in seeded_db['invoices']:
-        assert invoice.customer in seeded_db['customers']
+    for invoice in seeded_db["invoices"]:
+        assert invoice.customer in seeded_db["customers"]

@@ -4,6 +4,7 @@ Visual regression tests for the Window Wash CRM application.
 These tests capture screenshots of different pages in the application and compare them
 against baseline images to detect unintended visual changes in the UI.
 """
+
 import os
 import logging
 import pytest
@@ -20,11 +21,7 @@ from ww_crm.tests.e2e.pages.invoice_list_page import InvoiceListPage
 logger = logging.getLogger(__name__)
 
 # Mark all tests in this module as requiring the live_server and as e2e tests
-pytestmark = [
-    pytest.mark.usefixtures('live_server'),
-    pytest.mark.e2e,
-    pytest.mark.visual
-]
+pytestmark = [pytest.mark.usefixtures("live_server"), pytest.mark.e2e, pytest.mark.visual]
 
 # Configuration for visual regression tests
 SCREENSHOT_DIR = Path(__file__).parent / "screenshots"
@@ -94,6 +91,7 @@ class TestVisual:
         if not baseline_path.exists():
             logger.info(f"Baseline doesn't exist, creating: {baseline_path}")
             import shutil
+
             shutil.copy(actual_path, baseline_path)
             return 0
 

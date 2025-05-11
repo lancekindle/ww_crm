@@ -16,21 +16,17 @@ def create_app(config=None):
     app = Flask(__name__)
 
     # Load default configuration
-    app.config.from_mapping(
-        SECRET_KEY='dev',  # Change this in production!
-        TESTING=False,
-        DEBUG=True
-    )
+    app.config.from_mapping(SECRET_KEY="dev", TESTING=False, DEBUG=True)  # Change this in production!
 
     # Override with provided config if any
     if config:
         app.config.update(config)
 
     # Register routes
-    @app.route('/')
+    @app.route("/")
     def index():
         """Render the home page."""
-        return render_template('index.html')
+        return render_template("index.html")
 
     # Import db after creating app to avoid circular imports
     from ww_crm.db import db, configure_db
@@ -47,6 +43,7 @@ def create_app(config=None):
     # Register blueprints
     from ww_crm.routes.customers import bp as customers_bp
     from ww_crm.routes.invoices import bp as invoices_bp
+
     app.register_blueprint(customers_bp)
     app.register_blueprint(invoices_bp)
 
@@ -60,5 +57,5 @@ def create_app(config=None):
 # Create an application instance for direct running and WSGI servers
 app = create_app()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

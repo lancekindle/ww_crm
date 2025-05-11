@@ -14,6 +14,7 @@ By relying on Playwright's built-in mechanisms instead of explicit waits, our te
 
 This test ensures we maintain these benefits by checking for explicit wait patterns.
 """
+
 import os
 import re
 import pytest
@@ -25,18 +26,18 @@ pytestmark = pytest.mark.unit
 
 # Patterns to detect explicit waits
 WAIT_PATTERNS = [
-    (r'\.wait_for_selector\(', 'Explicit wait_for_selector call'),
-    (r'\.wait_for_timeout\(', 'Arbitrary timeout'),
-    (r'\.wait_for_url\(', 'Explicit URL wait'),
-    (r'\.wait_for_load_state\(', 'Explicit load state wait'),
-    (r'expect_navigation\(.*wait_until\s*=', 'Custom navigation wait_until'),
-    (r'page\.wait_for\(', 'Generic wait_for call'),
+    (r"\.wait_for_selector\(", "Explicit wait_for_selector call"),
+    (r"\.wait_for_timeout\(", "Arbitrary timeout"),
+    (r"\.wait_for_url\(", "Explicit URL wait"),
+    (r"\.wait_for_load_state\(", "Explicit load state wait"),
+    (r"expect_navigation\(.*wait_until\s*=", "Custom navigation wait_until"),
+    (r"page\.wait_for\(", "Generic wait_for call"),
 ]
 
 # Patterns for allowed exceptions
 ALLOWED_PATTERNS = [
     # Example of an allowed exception:
-    r'# ALLOW_WAIT: .*',
+    r"# ALLOW_WAIT: .*",
 ]
 
 
@@ -50,7 +51,7 @@ def get_e2e_test_files():
     root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     # Find all Python files in the e2e directory
-    pattern = os.path.join(root_dir, 'ww_crm', 'tests', 'e2e', '**', '*.py')
+    pattern = os.path.join(root_dir, "ww_crm", "tests", "e2e", "**", "*.py")
     return glob(pattern, recursive=True)
 
 
@@ -62,7 +63,7 @@ def test_no_explicit_waits_in_e2e_tests():
     errors = []
 
     for file_path in test_files:
-        with open(file_path, 'r') as f:
+        with open(file_path, "r") as f:
             file_content = f.read()
 
         # Get relative path for more readable output
@@ -75,8 +76,8 @@ def test_no_explicit_waits_in_e2e_tests():
 
             for match in matches:
                 # Check if this is an allowed exception
-                line_start = file_content.rfind('\n', 0, match.start()) + 1
-                line_end = file_content.find('\n', match.start())
+                line_start = file_content.rfind("\n", 0, match.start()) + 1
+                line_end = file_content.find("\n", match.start())
                 line = file_content[line_start:line_end]
 
                 # Skip if the line has an allowed exception
@@ -84,7 +85,7 @@ def test_no_explicit_waits_in_e2e_tests():
                     continue
 
                 # Get line number (count newlines before match)
-                line_number = file_content.count('\n', 0, match.start()) + 1
+                line_number = file_content.count("\n", 0, match.start()) + 1
 
                 # Add error
                 errors.append(f"{rel_path}:{line_number} - {description}: {line.strip()}")

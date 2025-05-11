@@ -28,5 +28,5 @@ def mock_datetime_now(monkeypatch, mocked_date=None):
         def now(cls):
             return mocked_date
 
-    monkeypatch.setattr('window_wash_crm.models.datetime', MockedDatetime)
+    monkeypatch.setattr("window_wash_crm.models.datetime", MockedDatetime)
     return mocked_date

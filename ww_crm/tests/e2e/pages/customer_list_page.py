@@ -1,6 +1,7 @@
 """
 Customer list page object for UI testing.
 """
+
 import logging
 from playwright.sync_api import Page
 from .base_page import NavigablePage
@@ -39,37 +40,22 @@ class CustomerListPage(NavigablePage):
 
         # Assert customer heading or any other reliable element is present
         try:
-            self.assert_element_visible(
-                CustomerPageSelectors.LIST_HEADING,
-                "Customers heading"
-            )
+            self.assert_element_visible(CustomerPageSelectors.LIST_HEADING, "Customers heading")
         except AssertionError:
             # Fall back to checking if the customers table is visible
             logger.warning("Could not find customers heading, checking for customer table instead")
-            self.assert_element_visible(
-                CustomerPageSelectors.LIST_TABLE,
-                "Customers table"
-            )
+            self.assert_element_visible(CustomerPageSelectors.LIST_TABLE, "Customers table")
 
     def click_add_customer(self):
         """Click the Add Customer button."""
         logger.info("Clicking Add Customer button")
-        self.assert_element_visible(
-            CustomerPageSelectors.BTN_ADD_CUSTOMER,
-            "Add Customer button"
-        )
-        self.click_element(
-            CustomerPageSelectors.BTN_ADD_CUSTOMER,
-            "Add Customer button"
-        )
+        self.assert_element_visible(CustomerPageSelectors.BTN_ADD_CUSTOMER, "Add Customer button")
+        self.click_element(CustomerPageSelectors.BTN_ADD_CUSTOMER, "Add Customer button")
 
     def assert_customer_table_visible(self):
         """Assert that the customers table is visible."""
         logger.debug("Verifying customer table is visible")
-        self.assert_element_visible(
-            CustomerPageSelectors.LIST_TABLE,
-            "Customers table"
-        )
+        self.assert_element_visible(CustomerPageSelectors.LIST_TABLE, "Customers table")
 
     def assert_customer_visible(self, customer_id, expected_name=None):
         """
@@ -88,9 +74,7 @@ class CustomerListPage(NavigablePage):
         if expected_name:
             customer_name_selector = CustomerPageSelectors.customer_name_cell(customer_id)
             self.assert_element_contains_text(
-                customer_name_selector,
-                expected_name,
-                f"Customer name for ID {customer_id}"
+                customer_name_selector, expected_name, f"Customer name for ID {customer_id}"
             )
 
     def assert_customer_exists_by_name(self, name):
@@ -127,11 +111,7 @@ class CustomerListPage(NavigablePage):
 
             # Fallback to the original assertion if iterative search fails
             logger.info(f"DEBUG: Falling back to text content search for '{name}'")
-            self.assert_element_contains_text(
-                table_selector,
-                name,
-                f"Customer with name '{name}'"
-            )
+            self.assert_element_contains_text(table_selector, name, f"Customer with name '{name}'")
             return True
         except Exception as e:
             logger.error(f"DEBUG: Error during customer search: {str(e)}")

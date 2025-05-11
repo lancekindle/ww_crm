@@ -1,6 +1,7 @@
 """
 Pytest configuration and fixtures for Window Wash CRM tests.
 """
+
 import os
 import tempfile
 import pytest
@@ -14,19 +15,16 @@ from ww_crm.tests.fixtures import CustomerFactory, InvoiceFactory, seed_test_dat
 # Application Fixtures
 # --------------------------------
 
-@pytest.fixture(scope='session')
+
+@pytest.fixture(scope="session")
 def app():
     """Create a Flask app configured for testing using the application factory."""
     # Create a test configuration
-    test_config = {
-        'TESTING': True,
-        'WTF_CSRF_ENABLED': False,
-        'DEBUG': False
-    }
+    test_config = {"TESTING": True, "WTF_CSRF_ENABLED": False, "DEBUG": False}
 
     # Set up the test database
     db_fd, db_path = tempfile.mkstemp()
-    test_config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    test_config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 
     # Create the app with test configuration
     flask_app = create_app(test_config)
@@ -41,7 +39,7 @@ def app():
     os.unlink(db_path)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def db(app):
     """
     Create a fresh database for each test.
@@ -56,7 +54,7 @@ def db(app):
         _db.drop_all()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def client(app, db):
     """Create a test client for the Flask application."""
     return app.test_client()
@@ -66,19 +64,20 @@ def client(app, db):
 # Test Data Fixtures
 # --------------------------------
 
-@pytest.fixture(scope='function')
+
+@pytest.fixture(scope="function")
 def sample_customer(db):
     """Create a sample customer for testing using the factory."""
     return CustomerFactory()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def sample_invoice(db, sample_customer):
     """Create a sample invoice for testing using the factory."""
     return InvoiceFactory(customer=sample_customer)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def seeded_db(db):
     """
     Create a database seeded with a standard set of test data.
@@ -93,7 +92,8 @@ def seeded_db(db):
 # UI Test Fixtures
 # --------------------------------
 
-@pytest.fixture(scope='function')
+
+@pytest.fixture(scope="function")
 def selenium_browser():
     """
     Placeholder for a Selenium WebDriver instance.

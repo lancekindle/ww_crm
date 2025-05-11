@@ -4,15 +4,16 @@ Database utilities for testing.
 This module provides functions for seeding the database with test data,
 cleaning up test data, and other database-related test utilities.
 """
+
 from typing import Dict, List, Union, Optional
 from ww_crm.models import Customer, Invoice
 from ww_crm.db import db
 from .factories import CustomerFactory, InvoiceFactory
 
 
-def seed_test_data(num_customers: int = 5,
-                   invoices_per_customer: int = 2,
-                   session: Optional[object] = None) -> Dict[str, List[Union[Customer, Invoice]]]:
+def seed_test_data(
+    num_customers: int = 5, invoices_per_customer: int = 2, session: Optional[object] = None
+) -> Dict[str, List[Union[Customer, Invoice]]]:
     """
     Seed the database with test customers and invoices.
 
@@ -33,17 +34,11 @@ def seed_test_data(num_customers: int = 5,
     # Create invoices for each customer
     invoices = []
     for customer in customers:
-        customer_invoices = InvoiceFactory.create_batch(
-            size=invoices_per_customer,
-            customer=customer
-        )
+        customer_invoices = InvoiceFactory.create_batch(size=invoices_per_customer, customer=customer)
         invoices.extend(customer_invoices)
 
     # Return all created objects
-    return {
-        'customers': customers,
-        'invoices': invoices
-    }
+    return {"customers": customers, "invoices": invoices}
 
 
 def clear_test_data(session: Optional[object] = None) -> None:

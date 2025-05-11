@@ -23,27 +23,27 @@ from typing import List, Dict, Tuple
 
 # Patterns to detect explicit waits
 WAIT_PATTERNS = [
-    (r'\.wait_for_selector\(', 'Explicit wait_for_selector call'),
-    (r'\.wait_for_timeout\(', 'Arbitrary timeout'),
-    (r'\.wait_for_url\(', 'Explicit URL wait'),
-    (r'\.wait_for_load_state\(', 'Explicit load state wait'),
-    (r'expect_navigation\(.*wait_until\s*=', 'Custom navigation wait_until'),
-    (r'page\.wait_for\(', 'Generic wait_for call'),
+    (r"\.wait_for_selector\(", "Explicit wait_for_selector call"),
+    (r"\.wait_for_timeout\(", "Arbitrary timeout"),
+    (r"\.wait_for_url\(", "Explicit URL wait"),
+    (r"\.wait_for_load_state\(", "Explicit load state wait"),
+    (r"expect_navigation\(.*wait_until\s*=", "Custom navigation wait_until"),
+    (r"page\.wait_for\(", "Generic wait_for call"),
 ]
 
 # Patterns for allowed exceptions
 ALLOWED_PATTERNS = [
     # Example of an allowed exception:
-    r'# ALLOW_WAIT: .*',
+    r"# ALLOW_WAIT: .*",
 ]
 
 # Directories to scan
 TEST_DIRS = [
-    'ww_crm/tests/e2e',
+    "ww_crm/tests/e2e",
 ]
 
 # File extensions to check
-FILE_EXTENSIONS = ['.py']
+FILE_EXTENSIONS = [".py"]
 
 
 def find_test_files(base_dir: str = None) -> List[str]:
@@ -87,7 +87,7 @@ def check_file(file_path: str) -> Dict[int, List[Tuple[str, str]]]:
     """
     results = {}
 
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         lines = f.readlines()
 
     for i, line in enumerate(lines, 1):
@@ -107,8 +107,8 @@ def check_file(file_path: str) -> Dict[int, List[Tuple[str, str]]]:
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(description='Check for explicit waits in UI test files')
-    parser.add_argument('path', nargs='?', help='Path to file or directory to check')
+    parser = argparse.ArgumentParser(description="Check for explicit waits in UI test files")
+    parser.add_argument("path", nargs="?", help="Path to file or directory to check")
     args = parser.parse_args()
 
     files_to_check = find_test_files(args.path)
@@ -141,5 +141,5 @@ def main():
         return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

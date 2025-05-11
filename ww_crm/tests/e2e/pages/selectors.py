@@ -8,6 +8,7 @@ making them easier to maintain and update when the UI changes.
 
 class NavigationSelectors:
     """Selectors for navigation elements common across pages."""
+
     MAIN_NAV = "#main-nav"
     NAV_HOME = "#nav-home"
     NAV_CUSTOMERS = "#nav-customers"
@@ -17,6 +18,7 @@ class NavigationSelectors:
 
 class HomePageSelectors:
     """Selectors for the home page."""
+
     WELCOME_HEADING = "#welcome-heading"
     WELCOME_MESSAGE = "#welcome-message"
 

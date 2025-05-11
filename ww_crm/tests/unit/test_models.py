@@ -10,29 +10,29 @@ def test_customer_model(db):
     """Test that a customer can be created and retrieved."""
     # Create a customer
     customer = Customer(
-        name='John Doe',
-        phone='555-123-4567',
-        email='john@example.com',
-        address='456 Main St, Anytown',
-        building_type='residential',
+        name="John Doe",
+        phone="555-123-4567",
+        email="john@example.com",
+        address="456 Main St, Anytown",
+        building_type="residential",
         window_count=8,
-        notes='First time customer'
+        notes="First time customer",
     )
     db.session.add(customer)
     db.session.commit()
 
     # Retrieve the customer from the database
-    retrieved = Customer.query.filter_by(name='John Doe').first()
+    retrieved = Customer.query.filter_by(name="John Doe").first()
 
     # Verify customer attributes
     assert retrieved.id is not None
-    assert retrieved.name == 'John Doe'
-    assert retrieved.phone == '555-123-4567'
-    assert retrieved.email == 'john@example.com'
-    assert retrieved.address == '456 Main St, Anytown'
-    assert retrieved.building_type == 'residential'
+    assert retrieved.name == "John Doe"
+    assert retrieved.phone == "555-123-4567"
+    assert retrieved.email == "john@example.com"
+    assert retrieved.address == "456 Main St, Anytown"
+    assert retrieved.building_type == "residential"
     assert retrieved.window_count == 8
-    assert retrieved.notes == 'First time customer'
+    assert retrieved.notes == "First time customer"
     assert isinstance(retrieved.created_at, datetime)
 
 
@@ -50,8 +50,8 @@ def test_invoice_model(db, sample_customer):
         issue_date=today,
         due_date=due_date,
         amount=120.50,
-        status='sent',
-        service_description='Window cleaning - 8 windows'
+        status="sent",
+        service_description="Window cleaning - 8 windows",
     )
     db.session.add(invoice)
     db.session.commit()
@@ -63,8 +63,8 @@ def test_invoice_model(db, sample_customer):
     assert retrieved.id is not None
     assert retrieved.customer_id == sample_customer.id
     assert retrieved.amount == 120.50
-    assert retrieved.status == 'sent'
-    assert retrieved.service_description == 'Window cleaning - 8 windows'
+    assert retrieved.status == "sent"
+    assert retrieved.service_description == "Window cleaning - 8 windows"
 
     # Test relationship
     assert retrieved.customer.name == sample_customer.name
@@ -80,8 +80,8 @@ def test_customer_invoice_relationship(db, sample_customer, sample_invoice):
         customer_id=sample_customer.id,
         service_date=datetime.utcnow(),
         amount=75.25,
-        status='draft',
-        service_description='Follow-up service'
+        status="draft",
+        service_description="Follow-up service",
     )
     db.session.add(new_invoice)
     db.session.commit()
@@ -94,3 +94,58 @@ def test_customer_invoice_relationship(db, sample_customer, sample_invoice):
 
     # Verify new invoice is in customer's invoices
     assert any(inv.amount == 75.25 for inv in sample_customer.invoices)
+
+
+def test_invoice_from_dict_method():
+    """Test the from_dict method for creating an Invoice from dictionary data."""
+    # Test with JSON data
+    json_data = {
+        'customer_id': 1,
+        'service_date': '2024-05-01T12:00:00',
+        'due_date': '2024-06-01T12:00:00',
+        'amount': 150.75,
+        'status': 'draft',
+        'service_description': 'Test service'
+    }
+
+    invoice = Invoice.from_dict(json_data, is_form=False)
+
+    assert invoice.customer_id == 1
+    assert invoice.service_date.isoformat() == '2024-05-01T12:00:00'
+    assert invoice.due_date.isoformat() == '2024-06-01T12:00:00'
+    assert invoice.amount == 150.75
+    assert invoice.status == 'draft'
+    assert invoice.service_description == 'Test service'
+
+    # Test with form data
+    form_data = {
+        'customer_id': 2,
+        'service_date': '2024-05-15',
+        'due_date': '2024-06-15',
+        'amount': '200.50',
+        'status': 'sent',
+        'service_description': 'Another test service'
+    }
+
+    invoice = Invoice.from_dict(form_data, is_form=True)
+
+    assert invoice.customer_id == 2
+    assert invoice.service_date.strftime('%Y-%m-%d') == '2024-05-15'
+    assert invoice.due_date.strftime('%Y-%m-%d') == '2024-06-15'
+    assert invoice.amount == 200.50
+    assert invoice.status == 'sent'
+    assert invoice.service_description == 'Another test service'
+
+
+def test_invoice_to_dict_method(db, sample_invoice):
+    """Test the to_dict method for converting an Invoice to a dictionary."""
+    invoice_dict = sample_invoice.to_dict()
+
+    assert invoice_dict['id'] == sample_invoice.id
+    assert invoice_dict['customer_id'] == sample_invoice.customer_id
+    assert invoice_dict['service_date'] == sample_invoice.service_date.isoformat()
+    assert invoice_dict['issue_date'] == sample_invoice.issue_date.isoformat()
+    assert invoice_dict['due_date'] == sample_invoice.due_date.isoformat() if sample_invoice.due_date else None
+    assert invoice_dict['amount'] == sample_invoice.amount
+    assert invoice_dict['status'] == sample_invoice.status
+    assert invoice_dict['service_description'] == sample_invoice.service_description

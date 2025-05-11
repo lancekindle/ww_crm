@@ -4,6 +4,7 @@ UI tests for the Window Wash CRM application.
 These tests use Playwright to verify the application's UI functionality.
 The tests follow the Page Object Model pattern for better organization and maintenance.
 """
+
 import logging
 import pytest
 from pytest import param
@@ -18,40 +19,46 @@ from ww_crm.tests.e2e.pages.invoice_list_page import InvoiceListPage
 logger = logging.getLogger(__name__)
 
 # Mark all tests in this module as requiring the live_server and as e2e tests
-pytestmark = [
-    pytest.mark.usefixtures('live_server'),
-    pytest.mark.e2e
-]
+pytestmark = [pytest.mark.usefixtures("live_server"), pytest.mark.e2e]
 
 # Test data for parameterized tests
 CUSTOMER_TEST_DATA = [
-    param({
-        'name': 'Residential Customer',
-        'phone': '555-111-2222',
-        'email': 'residential@example.com',
-        'address': '123 Home St',
-        'building_type': 'residential',
-        'window_count': 10,
-        'notes': 'Regular residential customer with few windows'
-    }, id='residential_small'),
-    param({
-        'name': 'Residential Large',
-        'phone': '555-222-3333',
-        'email': 'large.home@example.com',
-        'address': '456 Mansion Ave',
-        'building_type': 'residential',
-        'window_count': 30,
-        'notes': 'Large residential with many windows'
-    }, id='residential_large'),
-    param({
-        'name': 'Commercial Building',
-        'phone': '555-333-4444',
-        'email': 'commercial@example.com',
-        'address': '789 Business Blvd',
-        'building_type': 'commercial',
-        'window_count': 50,
-        'notes': 'Office building with many windows'
-    }, id='commercial')
+    param(
+        {
+            "name": "Residential Customer",
+            "phone": "555-111-2222",
+            "email": "residential@example.com",
+            "address": "123 Home St",
+            "building_type": "residential",
+            "window_count": 10,
+            "notes": "Regular residential customer with few windows",
+        },
+        id="residential_small",
+    ),
+    param(
+        {
+            "name": "Residential Large",
+            "phone": "555-222-3333",
+            "email": "large.home@example.com",
+            "address": "456 Mansion Ave",
+            "building_type": "residential",
+            "window_count": 30,
+            "notes": "Large residential with many windows",
+        },
+        id="residential_large",
+    ),
+    param(
+        {
+            "name": "Commercial Building",
+            "phone": "555-333-4444",
+            "email": "commercial@example.com",
+            "address": "789 Business Blvd",
+            "building_type": "commercial",
+            "window_count": 50,
+            "notes": "Office building with many windows",
+        },
+        id="commercial",
+    ),
 ]
 
 
@@ -97,9 +104,7 @@ class TestUserInterface:
         self.customer_list_page.assert_page_loaded()
 
         # Verify sample customer is visible
-        self.customer_list_page.assert_customer_visible(
-            sample_customer.id, sample_customer.name
-        )
+        self.customer_list_page.assert_customer_visible(sample_customer.id, sample_customer.name)
 
     def test_invoice_list(self, sample_invoice):
         """Test that the invoice list displays properly."""
@@ -113,7 +118,5 @@ class TestUserInterface:
 
         # Verify sample invoice is visible
         self.invoice_list_page.assert_invoice_visible(
-            sample_invoice.id,
-            sample_invoice.amount,
-            sample_invoice.customer.name
+            sample_invoice.id, sample_invoice.amount, sample_invoice.customer.name
         )

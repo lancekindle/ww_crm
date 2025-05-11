@@ -1,6 +1,7 @@
 """
 Customer create page object for UI testing.
 """
+
 import logging
 from playwright.sync_api import Page
 from .base_page import NavigablePage, FormPage
@@ -38,14 +39,8 @@ class CustomerCreatePage(NavigablePage, FormPage):
         """Assert that the customer creation page is loaded correctly."""
         logger.debug("Verifying customer creation page loaded")
         self.assert_url("/customers/create")
-        self.assert_element_visible(
-            CustomerPageSelectors.CREATE_HEADING,
-            "Create Customer heading"
-        )
-        self.assert_element_visible(
-            CustomerPageSelectors.CUSTOMER_FORM,
-            "Customer form"
-        )
+        self.assert_element_visible(CustomerPageSelectors.CREATE_HEADING, "Create Customer heading")
+        self.assert_element_visible(CustomerPageSelectors.CUSTOMER_FORM, "Customer form")
 
     def fill_customer_form(self, customer_data):
         """
@@ -60,13 +55,13 @@ class CustomerCreatePage(NavigablePage, FormPage):
         """
         logger.info("Filling customer form")
         field_mapping = {
-            'name': CustomerPageSelectors.NAME_INPUT,
-            'phone': CustomerPageSelectors.PHONE_INPUT,
-            'email': CustomerPageSelectors.EMAIL_INPUT,
-            'address': CustomerPageSelectors.ADDRESS_INPUT,
-            'building_type': CustomerPageSelectors.BUILDING_TYPE_SELECT,
-            'window_count': CustomerPageSelectors.WINDOW_COUNT_INPUT,
-            'notes': CustomerPageSelectors.NOTES_INPUT
+            "name": CustomerPageSelectors.NAME_INPUT,
+            "phone": CustomerPageSelectors.PHONE_INPUT,
+            "email": CustomerPageSelectors.EMAIL_INPUT,
+            "address": CustomerPageSelectors.ADDRESS_INPUT,
+            "building_type": CustomerPageSelectors.BUILDING_TYPE_SELECT,
+            "window_count": CustomerPageSelectors.WINDOW_COUNT_INPUT,
+            "notes": CustomerPageSelectors.NOTES_INPUT,
         }
 
         # Create a dictionary of field selectors and values
@@ -83,18 +78,12 @@ class CustomerCreatePage(NavigablePage, FormPage):
     def click_save_button(self):
         """Click the Save Customer button."""
         logger.info("Clicking Save Customer button")
-        self.click_element(
-            CustomerPageSelectors.BTN_SAVE_CUSTOMER,
-            "Save Customer button"
-        )
+        self.click_element(CustomerPageSelectors.BTN_SAVE_CUSTOMER, "Save Customer button")
 
     def click_cancel_button(self):
         """Click the Cancel button."""
         logger.info("Clicking Cancel button")
-        self.click_element(
-            CustomerPageSelectors.BTN_CANCEL,
-            "Cancel button"
-        )
+        self.click_element(CustomerPageSelectors.BTN_CANCEL, "Cancel button")
 
     def create_customer(self, customer_data):
         """
@@ -153,7 +142,9 @@ class CustomerCreatePage(NavigablePage, FormPage):
                             logger.info(f"DEBUG: Current URL matches expected: {expected_url}")
                             success = True
                         else:
-                            logger.warning(f"DEBUG: Navigation didn't match. Expected: {expected_url}, Got: {current_url}")
+                            logger.warning(
+                                f"DEBUG: Navigation didn't match. Expected: {expected_url}, Got: {current_url}"
+                            )
                 except Exception as nav_error:
                     logger.error(f"DEBUG: Navigation error: {str(nav_error)}")
 
@@ -178,10 +169,12 @@ class CustomerCreatePage(NavigablePage, FormPage):
                 try:
                     with self.page.expect_navigation(timeout=5000) as nav_info:
                         # Use a very simple JavaScript submission
-                        self.page.evaluate(f"""() => {{
+                        self.page.evaluate(
+                            f"""() => {{
                             const form = document.querySelector('{form_selector}');
                             if (form) form.submit();
-                        }}""")
+                        }}"""
+                        )
 
                     # Check navigation results
                     if nav_info.value and nav_info.value.url == expected_url:
@@ -225,4 +218,4 @@ class CustomerCreatePage(NavigablePage, FormPage):
             except Exception as e:
                 logger.error(f"DEBUG: Error checking for error messages: {str(e)}")
 
-        return success, customer_data.get('name', 'Unknown')
+        return success, customer_data.get("name", "Unknown")

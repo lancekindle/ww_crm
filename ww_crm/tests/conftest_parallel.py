@@ -10,6 +10,7 @@ Usage:
 
 This will run tests with 4 parallel workers using this configuration file.
 """
+
 import os
 import pytest
 import tempfile
@@ -28,8 +29,8 @@ def pytest_configure(config):
 @pytest.fixture(scope="session")
 def worker_id(request):
     """Return the worker ID for xdist."""
-    if hasattr(request.config, 'workerinput'):
-        return request.config.workerinput['workerid']
+    if hasattr(request.config, "workerinput"):
+        return request.config.workerinput["workerid"]
     return "main"
 
 
@@ -60,11 +61,11 @@ def parallel_db_path(base_temp_dir, worker_id):
 def parallel_app_config(parallel_db_path):
     """Create app configuration for parallel testing."""
     return {
-        'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': f'sqlite:///{parallel_db_path}',
-        'SERVER_NAME': f'localhost.localdomain',
-        'PREFERRED_URL_SCHEME': 'http',
-        'WTF_CSRF_ENABLED': False,
+        "TESTING": True,
+        "SQLALCHEMY_DATABASE_URI": f"sqlite:///{parallel_db_path}",
+        "SERVER_NAME": f"localhost.localdomain",
+        "PREFERRED_URL_SCHEME": "http",
+        "WTF_CSRF_ENABLED": False,
     }
 
 
@@ -97,7 +98,7 @@ def live_server(app, worker_id):
 
     # Extract worker number for port assignment
     try:
-        worker_num = int(''.join(filter(str.isdigit, worker_id)))
+        worker_num = int("".join(filter(str.isdigit, worker_id)))
     except ValueError:
         worker_num = 0
 
@@ -105,7 +106,7 @@ def live_server(app, worker_id):
     port = 5000 + worker_num
 
     # Create server with the unique port
-    server = make_server('localhost', port, app)
+    server = make_server("localhost", port, app)
     server_thread = multiprocessing.Process(target=server.serve_forever)
     server_thread.daemon = True
     server_thread.start()

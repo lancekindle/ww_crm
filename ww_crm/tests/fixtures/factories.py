@@ -4,6 +4,7 @@ Test data factories for Window Wash CRM.
 This module provides factory classes for generating test data
 instances of models that can be used in tests.
 """
+
 import factory
 import factory.fuzzy
 from datetime import datetime, timedelta
@@ -20,15 +21,15 @@ class CustomerFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = "commit"
 
     # Basic information
-    name = factory.Sequence(lambda n: f'Test Customer {n}')
-    phone = factory.Sequence(lambda n: f'555-{n:03d}-{n+1000:04d}')
+    name = factory.Sequence(lambda n: f"Test Customer {n}")
+    phone = factory.Sequence(lambda n: f"555-{n:03d}-{n+1000:04d}")
     email = factory.LazyAttribute(lambda obj: f'{obj.name.lower().replace(" ", ".")}@example.com')
-    address = factory.Sequence(lambda n: f'{n+100} Test Street, Test City, 12345')
+    address = factory.Sequence(lambda n: f"{n+100} Test Street, Test City, 12345")
 
     # Additional fields
-    building_type = factory.fuzzy.FuzzyChoice(['residential', 'commercial'])
+    building_type = factory.fuzzy.FuzzyChoice(["residential", "commercial"])
     window_count = factory.fuzzy.FuzzyInteger(5, 50)
-    notes = factory.Faker('paragraph')
+    notes = factory.Faker("paragraph")
     created_at = factory.LazyFunction(datetime.utcnow)
 
 
@@ -50,11 +51,13 @@ class InvoiceFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     # Invoice details
     amount = factory.fuzzy.FuzzyFloat(50, 500)
-    status = factory.fuzzy.FuzzyChoice(['draft', 'sent', 'paid'])
-    service_description = factory.fuzzy.FuzzyChoice([
-        'Regular window cleaning',
-        'Deep cleaning service',
-        'Interior and exterior windows',
-        'Commercial window washing',
-        'Residential full service'
-    ])
+    status = factory.fuzzy.FuzzyChoice(["draft", "sent", "paid"])
+    service_description = factory.fuzzy.FuzzyChoice(
+        [
+            "Regular window cleaning",
+            "Deep cleaning service",
+            "Interior and exterior windows",
+            "Commercial window washing",
+            "Residential full service",
+        ]
+    )
