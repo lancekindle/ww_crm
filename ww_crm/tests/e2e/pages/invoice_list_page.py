@@ -105,6 +105,7 @@ class InvoiceListPage(NavigablePage):
         selector = InvoicePageSelectors.btn_delete_invoice(invoice_id)
         self.click_element(selector, f"Delete button for invoice {invoice_id}")
 
-        # Since this triggers a confirmation dialog, we should wait a bit
-        logger.debug("Waiting for confirmation dialog")
-        self.page.wait_for_timeout(500)  # Short delay for dialog to appear
+        # Benefit: Playwright naturally handles dialog timing
+        # - Automatically waits for dialog to appear
+        # - Adapts to different application response times
+        # - No need for arbitrary timeouts that might be too short or too long

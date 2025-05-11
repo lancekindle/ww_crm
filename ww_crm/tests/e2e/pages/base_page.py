@@ -314,7 +314,4 @@ class FormPage(BasePage):
                     for error in error_messages:
                         logger.warning(f"Form error: {error.text_content()}")
 
-                # Wait a bit before retry
-                self.page.wait_for_timeout(1000)
-
         return False

@@ -39,6 +39,10 @@ def run_tests():
             args.append('-m integration')  # Run only integration tests
         elif category == 'e2e':
             args.append('-m e2e')  # Run only end-to-end tests
+        elif category == 'check-waits':
+            # Run the explicit wait checker
+            from ww_crm.tools.check_explicit_waits import main as check_waits
+            return check_waits()
         else:
             args.append(sys.argv[1])  # Allow specifying a test file or pattern
 
