@@ -31,6 +31,53 @@ class Customer(db.Model):
     def __repr__(self):
         """String representation of the Customer object."""
         return f"<Customer {self.id}: {self.name}>"
+        
+    def to_dict(self):
+        """
+        Convert customer to dictionary for API responses.
+        
+        Returns:
+            Dictionary of customer data
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "phone": self.phone,
+            "email": self.email,
+            "address": self.address,
+            "building_type": self.building_type,
+            "window_count": self.window_count,
+            "notes": self.notes,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+        
+    @classmethod
+    def from_dict(cls, data, is_form=False):
+        """
+        Create a customer instance from a dictionary (JSON or form data).
+        
+        Args:
+            data: Dictionary containing customer data
+            is_form: Whether the data is from a form
+            
+        Returns:
+            Customer instance (not yet added to session)
+        """
+        # Handle window_count type conversion for form data
+        window_count = data.get("window_count")
+        if is_form and window_count is not None and window_count != "":
+            window_count = int(window_count)
+        
+        # Create customer
+        return cls(
+            name=data.get("name"),
+            phone=data.get("phone"),
+            email=data.get("email"),
+            address=data.get("address"),
+            building_type=data.get("building_type"),
+            window_count=window_count,
+            notes=data.get("notes")
+        )
 
 
 class Invoice(db.Model):
