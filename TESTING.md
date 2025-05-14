@@ -47,11 +47,29 @@ python run_tests.py models      # Run model tests
 python run_tests.py routes      # Run route tests
 python run_tests.py ui          # Run UI tests
 python run_tests.py utils       # Run utility tests
+python run_tests.py visual      # Run visual regression tests
 
 # Run tests by category
 python run_tests.py unit        # Run all unit tests
 python run_tests.py integration # Run all integration tests
 python run_tests.py e2e         # Run all end-to-end tests
+
+# Run tests with verbose output
+python run_tests.py --verbose
+python run_tests.py -v
+
+# Run tests in parallel mode
+python run_tests.py --parallel
+python run_tests.py --parallel --workers=4  # Specify number of workers
+
+# Stop on first test failure
+python run_tests.py --stop
+
+# Combine options
+python run_tests.py --parallel --verbose unit  # Run unit tests in parallel with verbose output
+
+# Special commands
+python run_tests.py --check-waits  # Check for explicit waits in UI tests
 ```
 
 ### Using pytest Directly
@@ -163,49 +181,34 @@ The test suite is designed to evolve with the application. The testing strategy 
 
 ## Recent Improvements
 
-### Phase 5 Improvements
+### Parallel Test Execution
 
-1. **Enhanced Customer Creation Form Testing**:
-   - Implemented proper form submission and validation test framework
-   - Added error handling and improved verification flow
-   - Enhanced test reliability and readability
-   - Maintained clear skip markers for tests pending application fixes
+The test suite supports parallel test execution to significantly improve test performance:
 
-2. **Parameterized Testing**:
-   - Implemented parameterized tests for different customer types
-   - Added test case identification for clearer test results
-   - Reduced code duplication while increasing test coverage
+- Parallel execution is enabled with the `--parallel` flag
+- Worker count can be customized with `--workers=N` (default is 2)
+- Uses `pytest-xdist` under the hood for distributing tests
+- Each worker gets isolated resources (database, server ports) to prevent conflicts
+- Particularly beneficial for E2E tests which are traditionally slow
 
-3. **Visual Regression Testing Framework**:
-   - Created a complete visual regression testing system
-   - Implemented screenshot capture and comparison logic
-   - Added support for baseline management and diff visualization
-   - Set up configurable thresholds for visual differences
+To run tests in parallel mode:
+```bash
+python run_tests.py --parallel
+python run_tests.py --parallel --workers=4 e2e  # Run E2E tests with 4 workers
+```
 
-4. **Parallel Test Execution**:
-   - Implemented parallel test runner with configurable worker count
-   - Created isolation mechanisms for database and network resources
-   - Added worker-specific fixture handling to prevent conflicts
-   - Significantly improved test execution performance
+### Visual Regression Testing
 
-5. **Enhanced Test Runner**:
-   - Rebuilt command line interface using argparse
-   - Added support for new test categories
-   - Improved output and error reporting
-   - Enhanced documentation with examples
+The test suite includes visual regression testing capabilities:
+- Captures screenshots of key UI states
+- Compares screenshots against baseline images
+- Highlights visual differences between runs
+- Organized in `ww_crm/tests/e2e/screenshots/`
 
-For more details, see the [PHASE5_IMPROVEMENTS.md](PHASE5_IMPROVEMENTS.md) document.
-
-### Phase 4 Improvements
-
-1. **Fixed SQLAlchemy Deprecation Warnings**:
-   - Updated all uses of `query.get()` to `db.session.get()` with proper error handling
-   - This addresses SQLAlchemy 2.0 compatibility
-
-2. **Added Comprehensive Documentation**:
-   - Created detailed testing documentation (this file)
-   - Improved docstrings and comments throughout test code
-   - Added examples for common testing patterns
+To run visual tests:
+```bash
+python run_tests.py visual
+```
 
 ### Future Improvements
 

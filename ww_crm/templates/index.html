@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Window Wash CRM{% endblock %}
+{% block title %}Home - {{ settings.business_name }} CRM{% endblock %}
 
 {% block content %}
-<h1 id="welcome-heading">Welcome to Window Wash CRM</h1>
-<p id="welcome-message">A simple customer relationship management system for window washing businesses.</p>
+<h1 id="welcome-heading">Welcome to {{ settings.business_name }} CRM</h1>
+<p id="welcome-message">A simple customer relationship management system for {{ settings.business_type|replace('_', ' ') }} businesses.</p>
 
 <div class="dashboard" id="dashboard">
     <div class="dashboard-section" id="quick-nav-section">
@@ -14,17 +14,19 @@
             <a href="/customers/create" class="btn" id="btn-add-new-customer">Add New Customer</a>
             <a href="/invoices" class="btn" id="btn-manage-invoices">Manage Invoices</a>
             <a href="/invoices/create" class="btn" id="btn-create-new-invoice">Create New Invoice</a>
+            <a href="/settings" class="btn" id="btn-business-settings">Business Settings</a>
         </div>
     </div>
 
     <div class="dashboard-section" id="about-section">
-        <h2 id="about-heading">About Window Wash CRM</h2>
-        <p id="about-description">A simple customer relationship management system for window washing businesses.</p>
+        <h2 id="about-heading">About {{ settings.business_name }} CRM</h2>
+        <p id="about-description">A simple customer relationship management system for {{ settings.business_type|replace('_', ' ') }} businesses.</p>
         <ul id="features-list">
             <li id="feature-1">Manage your customers' information</li>
             <li id="feature-2">Create and track invoices</li>
             <li id="feature-3">Generate text messages for easy communication</li>
             <li id="feature-4">Mobile-friendly interface for access on the go</li>
+            <li id="feature-5">Customizable for different service business types</li>
         </ul>
     </div>
 </div>

@@ -28,7 +28,7 @@ class CustomerFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     # Additional fields
     building_type = factory.fuzzy.FuzzyChoice(["residential", "commercial"])
-    window_count = factory.fuzzy.FuzzyInteger(5, 50)
+    service_units = factory.fuzzy.FuzzyInteger(5, 50)
     notes = factory.Faker("paragraph")
     created_at = factory.LazyFunction(datetime.utcnow)
 

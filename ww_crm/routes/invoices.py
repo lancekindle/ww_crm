@@ -6,7 +6,9 @@ from flask import Blueprint, request
 from ww_crm.models import Customer
 from ww_crm.services.invoice_service import InvoiceService
 from ww_crm.services.customer_service import CustomerService
+from ww_crm.services.business_config_service import BusinessConfigService
 from ww_crm.utils.response import render_response, created_response, no_content_response
+from ww_crm.utils.constants import InvoiceStatus
 
 # Create blueprint for invoice routes
 bp = Blueprint("invoices", __name__, url_prefix="/invoices")
@@ -50,9 +52,14 @@ def create_invoice():
             template_name="invoices/list.html" if not is_json else None
         )
 
-    # Get customers for dropdown and return the create form for GET requests
+    # Get customers for dropdown and business settings
     customers = CustomerService.get_all_customers()
-    return render_response("invoices/create.html", {}, customers=customers)
+    settings = BusinessConfigService.get_settings()
+    
+    return render_response("invoices/create.html", {}, 
+                          customers=customers, 
+                          invoice_statuses=InvoiceStatus.ALL,
+                          settings=settings)
 
 
 @bp.route("/<int:invoice_id>", methods=["GET"])
@@ -61,12 +68,19 @@ def view_invoice(invoice_id):
     # Get invoice
     invoice = InvoiceService.get_invoice_by_id(invoice_id)
     
+    # Get business settings and render SMS template
+    settings = BusinessConfigService.get_settings()
+    sms_text = BusinessConfigService.render_sms_template(invoice)
+    
     # Prepare JSON data
     json_data = invoice.to_dict()
     json_data["customer_name"] = invoice.customer.name
     
     # Return appropriate response
-    return render_response("invoices/view.html", json_data, invoice=invoice)
+    return render_response("invoices/view.html", json_data, 
+                          invoice=invoice, 
+                          settings=settings,
+                          sms_text=sms_text)
 
 
 @bp.route("/<int:invoice_id>", methods=["PUT"])

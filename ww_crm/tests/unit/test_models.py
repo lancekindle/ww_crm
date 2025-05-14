@@ -1,6 +1,7 @@
 import pytest
 from datetime import datetime, timedelta
 from ww_crm.models import Customer, Invoice
+from ww_crm.utils.constants import InvoiceStatus, BuildingType
 
 # Mark all tests in this module as unit tests
 pytestmark = pytest.mark.unit
@@ -15,7 +16,7 @@ def test_customer_model(db):
         email="john@example.com",
         address="456 Main St, Anytown",
         building_type="residential",
-        window_count=8,
+        service_units=8,
         notes="First time customer",
     )
     db.session.add(customer)
@@ -31,7 +32,7 @@ def test_customer_model(db):
     assert retrieved.email == "john@example.com"
     assert retrieved.address == "456 Main St, Anytown"
     assert retrieved.building_type == "residential"
-    assert retrieved.window_count == 8
+    assert retrieved.service_units == 8
     assert retrieved.notes == "First time customer"
     assert isinstance(retrieved.created_at, datetime)
 
@@ -94,6 +95,71 @@ def test_customer_invoice_relationship(db, sample_customer, sample_invoice):
 
     # Verify new invoice is in customer's invoices
     assert any(inv.amount == 75.25 for inv in sample_customer.invoices)
+
+
+def test_customer_last_invoice_fields(db):
+    """Test the denormalized last_invoice fields on the Customer model."""
+    # Create a customer
+    customer = Customer(
+        name="Jane Smith",
+        phone="555-987-6543",
+        building_type=BuildingType.RESIDENTIAL
+    )
+    db.session.add(customer)
+    db.session.commit()
+    
+    # Create an initial invoice
+    first_invoice = Invoice(
+        customer_id=customer.id,
+        service_date=datetime.utcnow() - timedelta(days=30),
+        amount=100.00,
+        status=InvoiceStatus.PAID,
+        service_description="Initial service",
+    )
+    db.session.add(first_invoice)
+    db.session.commit()
+    
+    # Manually update the last invoice fields (normally done by service layer)
+    customer.last_invoice_date = first_invoice.service_date
+    customer.last_invoice_amount = first_invoice.amount
+    customer.last_invoice_description = first_invoice.service_description
+    customer.last_invoice_id = first_invoice.id
+    db.session.commit()
+    
+    # Verify fields are set
+    assert customer.last_invoice_date == first_invoice.service_date
+    assert customer.last_invoice_amount == 100.00
+    assert customer.last_invoice_description == "Initial service"
+    assert customer.last_invoice_id == first_invoice.id
+    
+    # Create a newer invoice
+    second_invoice = Invoice(
+        customer_id=customer.id,
+        service_date=datetime.utcnow() - timedelta(days=10),
+        amount=150.00,
+        status=InvoiceStatus.SENT,
+        service_description="Follow-up service",
+    )
+    db.session.add(second_invoice)
+    db.session.commit()
+    
+    # Update the last invoice fields again
+    customer.last_invoice_date = second_invoice.service_date
+    customer.last_invoice_amount = second_invoice.amount
+    customer.last_invoice_description = second_invoice.service_description
+    customer.last_invoice_id = second_invoice.id
+    db.session.commit()
+    
+    # Verify fields are updated
+    assert customer.last_invoice_amount == 150.00
+    assert customer.last_invoice_description == "Follow-up service"
+    assert customer.last_invoice_id == second_invoice.id
+    
+    # Verify to_dict includes the last_invoice fields
+    customer_dict = customer.to_dict()
+    assert customer_dict["last_invoice_amount"] == 150.00
+    assert customer_dict["last_invoice_description"] == "Follow-up service"
+    assert customer_dict["last_invoice_id"] == second_invoice.id
 
 
 def test_invoice_from_dict_method():

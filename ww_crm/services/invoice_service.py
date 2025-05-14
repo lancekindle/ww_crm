@@ -6,6 +6,7 @@ from flask import abort
 from ww_crm.db import db
 from ww_crm.models import Invoice, Customer
 from ww_crm.services.customer_service import CustomerService
+from ww_crm.utils.constants import InvoiceStatus
 
 
 class InvoiceService:
@@ -77,12 +78,19 @@ class InvoiceService:
         """
         # Verify the customer exists
         customer_id = data.get("customer_id")
-        CustomerService.get_customer_by_id(customer_id)
+        customer = CustomerService.get_customer_by_id(customer_id)
         
         # Create invoice
         invoice = Invoice.from_dict(data, is_form)
+        # Set default status if not provided
+        if not invoice.status:
+            invoice.status = InvoiceStatus.DRAFT
         db.session.add(invoice)
         db.session.commit()
+        
+        # Update customer's last invoice information
+        InvoiceService._update_customer_last_invoice(customer, invoice)
+        
         return invoice
     
     @staticmethod
@@ -127,6 +135,16 @@ class InvoiceService:
             invoice.due_date = data["due_date"]
         
         db.session.commit()
+        
+        # Update customer's last invoice information if this is the latest invoice
+        customer = CustomerService.get_customer_by_id(invoice.customer_id)
+        latest_invoice = Invoice.query.filter_by(customer_id=invoice.customer_id).order_by(
+            Invoice.service_date.desc()
+        ).first()
+        
+        if latest_invoice and latest_invoice.id == invoice.id:
+            InvoiceService._update_customer_last_invoice(customer, invoice)
+            
         return invoice
     
     @staticmethod
@@ -141,5 +159,53 @@ class InvoiceService:
             404: If the invoice is not found
         """
         invoice = InvoiceService.get_invoice_by_id(invoice_id)
+        customer_id = invoice.customer_id
         db.session.delete(invoice)
+        db.session.commit()
+        
+        # Update the customer's last invoice information
+        customer = CustomerService.get_customer_by_id(customer_id)
+        InvoiceService._update_customer_last_invoice_after_deletion(customer)
+        
+    @staticmethod
+    def _update_customer_last_invoice(customer, invoice):
+        """
+        Update a customer's last invoice information.
+        
+        Args:
+            customer: The customer to update
+            invoice: The invoice to use for the update
+        """
+        customer.last_invoice_date = invoice.service_date
+        customer.last_invoice_amount = invoice.amount
+        customer.last_invoice_description = invoice.service_description
+        customer.last_invoice_id = invoice.id
+        db.session.commit()
+        
+    @staticmethod
+    def _update_customer_last_invoice_after_deletion(customer):
+        """
+        Update a customer's last invoice information after an invoice is deleted.
+        
+        Args:
+            customer: The customer to update
+        """
+        # Find the most recent invoice for this customer
+        latest_invoice = Invoice.query.filter_by(customer_id=customer.id).order_by(
+            Invoice.service_date.desc()
+        ).first()
+        
+        if latest_invoice:
+            # Update with the most recent invoice
+            customer.last_invoice_date = latest_invoice.service_date
+            customer.last_invoice_amount = latest_invoice.amount
+            customer.last_invoice_description = latest_invoice.service_description
+            customer.last_invoice_id = latest_invoice.id
+        else:
+            # No invoices left, clear the fields
+            customer.last_invoice_date = None
+            customer.last_invoice_amount = None
+            customer.last_invoice_description = None
+            customer.last_invoice_id = None
+            
         db.session.commit()

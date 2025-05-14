@@ -29,14 +29,15 @@
     <div class="form-group">
         <label for="building_type">Building Type:</label>
         <select id="building_type" name="building_type">
-            <option value="residential">Residential</option>
-            <option value="commercial">Commercial</option>
+            {% for building_type in building_types %}
+            <option value="{{ building_type }}">{{ building_type|title }}</option>
+            {% endfor %}
         </select>
     </div>
 
     <div class="form-group">
-        <label for="window_count">Window Count:</label>
-        <input type="number" id="window_count" name="window_count" min="0">
+        <label for="service_units">{{ settings.service_unit_name|title }} Count:</label>
+        <input type="number" id="service_units" name="service_units" min="0">
     </div>
 
     <div class="form-group">

@@ -6,7 +6,9 @@ from flask import Blueprint, request
 from ww_crm.models import Customer
 from ww_crm.services.customer_service import CustomerService
 from ww_crm.services.invoice_service import InvoiceService
+from ww_crm.services.business_config_service import BusinessConfigService
 from ww_crm.utils.response import render_response, created_response, no_content_response
+from ww_crm.utils.constants import BuildingType
 
 # Create blueprint for customer routes
 bp = Blueprint("customers", __name__, url_prefix="/customers")
@@ -18,11 +20,15 @@ def list_customers():
     """Return a list of all customers."""
     customers = CustomerService.get_all_customers()
     
+    # Get business settings
+    settings = BusinessConfigService.get_settings()
+    
     # Prepare JSON data
     json_data = [customer.to_dict() for customer in customers]
     
     # Return appropriate response
-    return render_response("customers/list.html", json_data, customers=customers)
+    return render_response("customers/list.html", json_data, 
+                          customers=customers, settings=settings)
 
 
 @bp.route("/create", methods=["GET", "POST"])
@@ -42,8 +48,13 @@ def create_customer():
             redirect_endpoint="customers.list_customers" if not is_json else None
         )
 
+    # Get business settings
+    settings = BusinessConfigService.get_settings()
+    
     # Return the create form for GET requests
-    return render_response("customers/create.html", {})
+    return render_response("customers/create.html", {}, 
+                          building_types=BuildingType.ALL,
+                          settings=settings)
 
 
 @bp.route("/<int:customer_id>", methods=["GET"])
@@ -52,8 +63,12 @@ def view_customer(customer_id):
     # Get customer
     customer = CustomerService.get_customer_by_id(customer_id)
     
+    # Get business settings
+    settings = BusinessConfigService.get_settings()
+    
     # Return appropriate response
-    return render_response("customers/view.html", customer.to_dict(), customer=customer)
+    return render_response("customers/view.html", customer.to_dict(), 
+                          customer=customer, settings=settings)
 
 
 @bp.route("/<int:customer_id>", methods=["PUT"])

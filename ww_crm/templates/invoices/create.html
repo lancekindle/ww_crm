@@ -36,9 +36,9 @@
     <div class="form-group">
         <label for="status">Status:</label>
         <select id="status" name="status">
-            <option value="draft">Draft</option>
-            <option value="sent">Sent</option>
-            <option value="paid">Paid</option>
+            {% for status in invoice_statuses %}
+            <option value="{{ status }}">{{ status|title }}</option>
+            {% endfor %}
         </select>
     </div>
 

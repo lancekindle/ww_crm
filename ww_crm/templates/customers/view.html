@@ -11,9 +11,17 @@
     <p><strong>Email:</strong> {{ customer.email }}</p>
     <p><strong>Address:</strong> {{ customer.address }}</p>
     <p><strong>Building Type:</strong> {{ customer.building_type }}</p>
-    <p><strong>Window Count:</strong> {{ customer.window_count }}</p>
+    <p><strong>{{ settings.service_unit_name|title }} Count:</strong> {{ customer.service_units }}</p>
     <p><strong>Notes:</strong> {{ customer.notes }}</p>
     <p><strong>Created At:</strong> {{ customer.created_at.strftime('%Y-%m-%d') }}</p>
+    
+    {% if customer.last_invoice_id %}
+    <h3>Last Invoice</h3>
+    <p><strong>Date:</strong> {{ customer.last_invoice_date.strftime('%Y-%m-%d') }}</p>
+    <p><strong>Amount:</strong> ${{ "%.2f"|format(customer.last_invoice_amount) }}</p>
+    <p><strong>Description:</strong> {{ customer.last_invoice_description }}</p>
+    <p><a href="/invoices/{{ customer.last_invoice_id }}" class="btn">View Last Invoice</a></p>
+    {% endif %}
 </div>
 
 <h2>Invoices</h2>

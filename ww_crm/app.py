@@ -26,7 +26,13 @@ def create_app(config=None):
     @app.route("/")
     def index():
         """Render the home page."""
-        return render_template("index.html")
+        # Import here to avoid circular imports
+        from ww_crm.services.business_config_service import BusinessConfigService
+        
+        # Get business settings
+        settings = BusinessConfigService.get_settings()
+        
+        return render_template("index.html", settings=settings)
 
     # Import db after creating app to avoid circular imports
     from ww_crm.db import db, configure_db
@@ -38,14 +44,16 @@ def create_app(config=None):
     migrate = Migrate(app, db)
 
     # Import models to ensure they're known to SQLAlchemy
-    from ww_crm.models import Customer, Invoice
+    from ww_crm.models import Customer, Invoice, BusinessConfig
 
     # Register blueprints
     from ww_crm.routes.customers import bp as customers_bp
     from ww_crm.routes.invoices import bp as invoices_bp
+    from ww_crm.routes.settings import bp as settings_bp
 
     app.register_blueprint(customers_bp)
     app.register_blueprint(invoices_bp)
+    app.register_blueprint(settings_bp)
 
     # Create all tables if they don't exist
     with app.app_context():

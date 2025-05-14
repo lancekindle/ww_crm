@@ -62,6 +62,7 @@ CUSTOMER_TEST_DATA = [
 ]
 
 
+@pytest.mark.skip("skipping tests (for now) that require installation of test browser")
 class TestUserInterface:
     """
     UI Tests using the Page Object Model pattern.

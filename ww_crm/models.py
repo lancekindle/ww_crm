@@ -1,5 +1,6 @@
 from datetime import datetime
 from ww_crm.db import db
+from ww_crm.utils.constants import InvoiceStatus, BuildingType
 
 
 class Customer(db.Model):
@@ -16,6 +17,10 @@ class Customer(db.Model):
         window_count: Number of windows at the customer's location
         notes: Additional notes about the customer
         created_at: When the customer record was created
+        last_invoice_date: Date of the most recent invoice
+        last_invoice_amount: Amount of the most recent invoice
+        last_invoice_description: Description of the most recent invoice
+        last_invoice_id: ID of the most recent invoice
     """
 
     id = db.Column(db.Integer, primary_key=True)
@@ -27,6 +32,12 @@ class Customer(db.Model):
     window_count = db.Column(db.Integer)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Denormalized fields for easier querying
+    last_invoice_date = db.Column(db.DateTime)
+    last_invoice_amount = db.Column(db.Float)
+    last_invoice_description = db.Column(db.Text)
+    last_invoice_id = db.Column(db.Integer)
 
     def __repr__(self):
         """String representation of the Customer object."""
@@ -49,6 +60,10 @@ class Customer(db.Model):
             "window_count": self.window_count,
             "notes": self.notes,
             "created_at": self.created_at.isoformat() if self.created_at else None,
+            "last_invoice_date": self.last_invoice_date.isoformat() if self.last_invoice_date else None,
+            "last_invoice_amount": self.last_invoice_amount,
+            "last_invoice_description": self.last_invoice_description,
+            "last_invoice_id": self.last_invoice_id,
         }
         
     @classmethod
@@ -101,7 +116,7 @@ class Invoice(db.Model):
     issue_date = db.Column(db.DateTime, default=datetime.utcnow)
     due_date = db.Column(db.DateTime)
     amount = db.Column(db.Float, nullable=False)
-    status = db.Column(db.String(20), default="draft")  # draft, sent, paid
+    status = db.Column(db.String(20), default=InvoiceStatus.DRAFT)
     service_description = db.Column(db.Text)
 
     # Relationship
@@ -149,7 +164,7 @@ class Invoice(db.Model):
             service_date=service_date,
             due_date=due_date,
             amount=amount,
-            status=data.get("status", "draft"),
+            status=data.get("status", InvoiceStatus.DRAFT),
             service_description=data.get("service_description"),
         )
 

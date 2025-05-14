@@ -18,13 +18,7 @@
 <div class="invoice-text">
     <h2>Invoice Text (for SMS)</h2>
     <div class="sms-preview">
-        <p id="sms-text">
-            Invoice for {{ invoice.service_description }} at {{ invoice.customer.address }}.
-            Date: {{ invoice.service_date.strftime('%Y-%m-%d') }}
-            Amount Due: ${{ "%.2f"|format(invoice.amount) }}
-            Due By: {{ invoice.due_date.strftime('%Y-%m-%d') if invoice.due_date else 'N/A' }}
-            Thank you for your business!
-        </p>
+        <p id="sms-text">{{ sms_text }}</p>
         <button class="btn" onclick="copySmsText()">Copy to Clipboard</button>
     </div>
 </div>

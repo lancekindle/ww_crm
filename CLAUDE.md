@@ -55,6 +55,7 @@ but the actual sending of the SMS will be done by the user.
 We want to make an app that somebody can understand, modify etc. We want to
 use SOLID principles when designing, and test, Test, TEST everything.
 Tests should be written first, and then verify the test fails before moving on to writing the logic.
+
 Use OOP where most functions are no more than 5
 lines long, we break complex functions down into objects and methods. Objects that can be reused, swapped where necessary
 will make maintaining this codebase easier. The goal for this codebase is to be
@@ -62,6 +63,7 @@ easy to read, no easy to maintain. We understand that designing a foolproof user
 ingenuity of fools. So instead we strive for a simple to use interface that does not assume, does not make things easier for the user
 if it introduces black boxes of logic that are hard to follow. When making a decision, logical or otherwise, remember that
 a good architect maximizes the number of decisions not made. This means if we're trying to reduce the number of if/else by using objects for controlling behavior.
+
 For ease of querying, we are going to have the "one webpage, one table" philosophy.
 Anything that needs querying an additional table should consider putting that information on the table itself.
 For example, the most recent invoice for a Customer, should be also put on the Customer model; last_invoice_date, last_invoice description, last_invoice amount, last_invoice_id.
