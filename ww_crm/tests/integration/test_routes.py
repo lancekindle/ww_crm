@@ -21,8 +21,7 @@ class TestCustomerRoutes:
             "phone": "555-987-6543",
             "email": "new@example.com",
             "address": "789 New St, Newtown",
-            "building_type": "commercial",
-            "window_count": 20,
+            "service_units": 20,
             "notes": "New customer notes",
         }
 
@@ -44,8 +43,7 @@ class TestCustomerRoutes:
             "phone": sample_customer.phone,
             "email": sample_customer.email,
             "address": sample_customer.address,
-            "building_type": sample_customer.building_type,
-            "window_count": 15,  # Updated window count
+            "service_units": 15,  # Updated service units
             "notes": "Updated notes",
         }
 

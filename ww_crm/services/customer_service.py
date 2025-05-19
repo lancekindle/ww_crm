@@ -5,7 +5,6 @@ Service layer for customer-related business logic.
 from flask import abort
 from ww_crm.db import db
 from ww_crm.models import Customer
-from ww_crm.utils.constants import BuildingType
 
 
 class CustomerService:
@@ -79,7 +78,6 @@ class CustomerService:
         customer.phone = data.get("phone", customer.phone)
         customer.email = data.get("email", customer.email)
         customer.address = data.get("address", customer.address)
-        customer.building_type = data.get("building_type", customer.building_type)
         customer.service_units = data.get("service_units", customer.service_units)
         customer.notes = data.get("notes", customer.notes)
         

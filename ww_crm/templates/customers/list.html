@@ -15,7 +15,6 @@
             <th id="col-phone">Phone</th>
             <th id="col-email">Email</th>
             <th id="col-address">Address</th>
-            <th id="col-building-type">Building Type</th>
             <th id="col-service-units">{{ settings.service_unit_name|title }} Count</th>
             <th id="col-actions">Actions</th>
         </tr>
@@ -27,7 +26,6 @@
             <td class="customer-phone">{{ customer.phone }}</td>
             <td class="customer-email">{{ customer.email }}</td>
             <td class="customer-address">{{ customer.address }}</td>
-            <td class="customer-building-type">{{ customer.building_type }}</td>
             <td class="customer-service-units">{{ customer.service_units }}</td>
             <td class="customer-actions">
                 <a href="/customers/{{ customer.id }}" class="btn" id="btn-view-customer-{{ customer.id }}">View</a>

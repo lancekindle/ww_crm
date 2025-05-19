@@ -1,11 +1,11 @@
 from datetime import datetime
 from ww_crm.db import db
-from ww_crm.utils.constants import InvoiceStatus, BuildingType
+from ww_crm.utils.constants import InvoiceStatus
 
 
 class Customer(db.Model):
     """
-    Customer model representing a window washing client.
+    Customer model representing a service business client.
 
     Attributes:
         id: Unique identifier for the customer
@@ -13,8 +13,7 @@ class Customer(db.Model):
         phone: Customer's phone number
         email: Customer's email address
         address: Customer's physical address
-        building_type: Type of building (residential, commercial)
-        window_count: Number of windows at the customer's location
+        service_units: Number of service units (e.g., windows, fixtures)
         notes: Additional notes about the customer
         created_at: When the customer record was created
         last_invoice_date: Date of the most recent invoice
@@ -28,8 +27,7 @@ class Customer(db.Model):
     phone = db.Column(db.String(20))
     email = db.Column(db.String(100))
     address = db.Column(db.String(200))
-    building_type = db.Column(db.String(20))
-    window_count = db.Column(db.Integer)
+    service_units = db.Column(db.Integer)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -56,8 +54,7 @@ class Customer(db.Model):
             "phone": self.phone,
             "email": self.email,
             "address": self.address,
-            "building_type": self.building_type,
-            "window_count": self.window_count,
+            "service_units": self.service_units,
             "notes": self.notes,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "last_invoice_date": self.last_invoice_date.isoformat() if self.last_invoice_date else None,
@@ -78,10 +75,10 @@ class Customer(db.Model):
         Returns:
             Customer instance (not yet added to session)
         """
-        # Handle window_count type conversion for form data
-        window_count = data.get("window_count")
-        if is_form and window_count is not None and window_count != "":
-            window_count = int(window_count)
+        # Handle service_units type conversion for form data
+        service_units = data.get("service_units")
+        if is_form and service_units is not None and service_units != "":
+            service_units = int(service_units)
         
         # Create customer
         return cls(
@@ -89,8 +86,7 @@ class Customer(db.Model):
             phone=data.get("phone"),
             email=data.get("email"),
             address=data.get("address"),
-            building_type=data.get("building_type"),
-            window_count=window_count,
+            service_units=service_units,
             notes=data.get("notes")
         )
 

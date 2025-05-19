@@ -8,7 +8,6 @@ from ww_crm.services.customer_service import CustomerService
 from ww_crm.services.invoice_service import InvoiceService
 from ww_crm.services.business_config_service import BusinessConfigService
 from ww_crm.utils.response import render_response, created_response, no_content_response
-from ww_crm.utils.constants import BuildingType
 
 # Create blueprint for customer routes
 bp = Blueprint("customers", __name__, url_prefix="/customers")
@@ -53,7 +52,6 @@ def create_customer():
     
     # Return the create form for GET requests
     return render_response("customers/create.html", {}, 
-                          building_types=BuildingType.ALL,
                           settings=settings)
 
 

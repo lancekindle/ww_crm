@@ -48,7 +48,7 @@ class CustomerCreatePage(NavigablePage, FormPage):
 
         Args:
             customer_data: Dictionary containing customer data with keys:
-                          name, phone, email, address, building_type, window_count, notes
+                          name, phone, email, address, service_units, notes
 
         Returns:
             Dictionary of field selectors and values that were filled
@@ -59,8 +59,7 @@ class CustomerCreatePage(NavigablePage, FormPage):
             "phone": CustomerPageSelectors.PHONE_INPUT,
             "email": CustomerPageSelectors.EMAIL_INPUT,
             "address": CustomerPageSelectors.ADDRESS_INPUT,
-            "building_type": CustomerPageSelectors.BUILDING_TYPE_SELECT,
-            "window_count": CustomerPageSelectors.WINDOW_COUNT_INPUT,
+            "service_units": CustomerPageSelectors.SERVICE_UNITS_INPUT,
             "notes": CustomerPageSelectors.NOTES_INPUT,
         }
 

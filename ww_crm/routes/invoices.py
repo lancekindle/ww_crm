@@ -47,10 +47,12 @@ def create_invoice():
         json_data["customer_name"] = invoice.customer.name
         
         # Return appropriate response
-        return created_response(
-            json_data,
-            template_name="invoices/list.html" if not is_json else None
-        )
+        if is_json:
+            return created_response(json_data)
+        else:
+            # For form submissions, redirect to the invoice view page
+            from flask import redirect, url_for
+            return redirect(url_for('invoices.view_invoice', invoice_id=invoice.id))
 
     # Get customers for dropdown and business settings
     customers = CustomerService.get_all_customers()
